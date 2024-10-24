@@ -1,8 +1,6 @@
-LI ! 8 12 
-SW ! 8 20
-LI ! 8 15
-SW ! 8 21
-LW ! 9 20
-LW ! 10 21
-ADD 8 9 10
-SW ! 8 22
+ILOAD 0 10
+ILOAD 1 2
+
+ADD 3 0 1
+
+STORE 3 0

@@ -1,4 +1,5 @@
-#include "CPU/CPU.hpp"
+#include "src/CPU.hpp"
+#include "src/RAM.hpp"
 
 vector<string> read_ROM(){
     ifstream codigo("codigo.txt");
@@ -15,12 +16,14 @@ int main(){
     int clock=0;
     vector<string> instrucoes = read_ROM();
     CPU cpu;
+
+    RAM ram;
     
     while (clock>=0)
     {
         cpu.InstructionFetch(instrucoes);
         cpu.InstructionDecode();
         cpu.Execute();
-        cpu.MemoryAccess();
+        cpu.MemoryAccess(ram);
     }
 }
