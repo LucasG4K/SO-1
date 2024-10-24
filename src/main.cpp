@@ -1,5 +1,5 @@
-#include "src/CPU.hpp"
-#include "src/RAM.hpp"
+#include "CPU.hpp"
+#include "RAM.hpp"
 
 vector<string> read_ROM(){
     ifstream codigo("codigo.txt");
