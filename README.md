@@ -4,7 +4,7 @@
         Criado em Outubro de 2024, o projeto do<strong> Simulador da Arquitetura de Von Neumann e Pipeline MIPS</strong> foi desenvolvido em virtude de atender as demandas do curso de Sistemas Operacionais, ministrado pelo professor <a href="https://www.linkedin.com/in/michelpiressilva/?originalSubdomain=br" target="_blank">Michel Pires Da Silva</a> no Centro Federal de Educação Tecnológica de Minas Gerais (<a href="https://www.divinopolis.cefetmg.br/" target="_blank">CEFET-MG</a>).
     </p>
     <p>
-        <a href="https://github.com/LuanLuL/Instalacao_Clientes/blob/main/documentation/assignment.pdf" target="_blank">Acesse o enunciado [AQUI]</a>
+        <a href="https://github.com/LucasG4K/SO-1/blob/main/documentation/assignment.pdf" target="_blank">Acesse o enunciado [AQUI]</a>
     </p>
     <div>
           <p>
