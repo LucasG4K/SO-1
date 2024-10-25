@@ -1,0 +1,6 @@
+ILOAD 0 10
+ILOAD 1 2
+
+ADD 3 0 1
+
+STORE 3 0
