@@ -19,7 +19,7 @@ class CPU {
   string op;
 
  public:
-  void InstructionFetch(vector<string> rom);
+  bool InstructionFetch(vector<string> rom);
   void InstructionDecode();
   void Execute();
   void MemoryAccess(RAM& ram);

@@ -21,15 +21,15 @@ int main() {
 
   RAM ram;
 
-  for(auto a : instrucoes) cout <<a << endl;
+  // for(auto a : instrucoes) cout <<a << endl;
 
-  while (clock < instrucoes.size()) {
-    cpu.InstructionFetch(instrucoes);
+  while (cpu.InstructionFetch(instrucoes)) {
     cpu.InstructionDecode();
     cpu.Execute();
     cpu.MemoryAccess(ram);
     cpu.WriteBack();
 
-    clock++;
+    clock+=5;
   }
+  cout<<"CLOCK: "<<clock<<endl;
 }

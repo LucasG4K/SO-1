@@ -28,11 +28,16 @@ vector<string> split(const string &str) {
   return result;
 }
 
-void CPU::InstructionFetch(vector<string> codigo) {
-  active_instruction = codigo[PC];
-  PC++;
+bool CPU::InstructionFetch(vector<string> codigo) {
+  if(PC<codigo.size()){
+    active_instruction = codigo[PC];
+    PC++;
 
-  dbg(active_instruction);
+    // dbg(PC);
+    // dbg(active_instruction);
+    return true;
+  }
+  else return false;
 }
 
 void CPU::InstructionDecode() {
@@ -40,7 +45,7 @@ void CPU::InstructionDecode() {
 
   op = linha[0];
 
-  for (auto l : linha) dbg(l);
+  // for (auto l : linha) dbg(l);
 
   if (linha[1] != "!") {
     register_bank.set_value(1, stoi(linha[1]));
@@ -81,20 +86,33 @@ void CPU::Execute()  // Unidade de controle
     result = ULA(register_bank.get_value(register2),
                  register_bank.get_value(register3), '/');
     ValueToWrite.first = true;
+  } else if (op == "SLT") {
+    ValueToWrite.first = true;
+    if (register_bank.get_value(register2) <
+        register_bank.get_value(register3)) {
+      result = 1;
+    } else {
+      result = 0;
+    }
   } else if (op == "BNE") {
     if (register_bank.get_value(register2) !=
         register_bank.get_value(register1)) {
-      PC = register_bank.get_value(register3)-1;
+      PC = register3 - 1;
+    }
+  } else if (op == "BEQ") {
+    if (register_bank.get_value(register2) ==
+        register_bank.get_value(register1)) {
+      PC = register3 - 1;
     }
   } else if (op == "J") {
-    PC = register_bank.get_value(register1)-1;
+    PC = register1 - 1;
   }
 
   ValueToWrite.second = result;
 }
 
 void CPU::MemoryAccess(RAM &ram) {
-  cout << "Memory Access" << endl;
+  // cout << "Memory Access" << endl;
 
   if (op == "LOAD") {
     ValueToWrite = {true, ram.get_value(register_bank.get_value(2))};
@@ -105,9 +123,8 @@ void CPU::MemoryAccess(RAM &ram) {
                   register_bank.get_value(register_bank.get_value(1)));
   }
 
-  ram.print();
+  // ram.print();
 
-  register_bank.print();
 }
 
 void CPU::WriteBack() {
@@ -115,4 +132,6 @@ void CPU::WriteBack() {
     register_bank.set_value(register_bank.get_value(1), ValueToWrite.second);
     ValueToWrite.first = false;
   }
+
+  // register_bank.print();
 }
