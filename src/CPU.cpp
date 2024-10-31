@@ -1,14 +1,14 @@
 #include "CPU.hpp"
 
 int ULA(int op1, int op2, char oper) {
-    if (oper == '+')
-        return op1 + op2;
-    else if (oper == '-')
-        return op1 - op2;
-    else if (oper == '*')
-        return op1 * op2;
-    else if (oper == '/')
-        return op1 / op2;
+  if (oper == '+')
+    return op1 + op2;
+  else if (oper == '-')
+    return op1 - op2;
+  else if (oper == '*')
+    return op1 * op2;
+  else if (oper == '/')
+    return op1 / op2;
   return 0;
 }
 
@@ -60,65 +60,38 @@ void CPU::InstructionDecode() {
 
 void CPU::Execute()  // Unidade de controle
 {
+  int register2 = register_bank.get_value(2);
+  int result = 0;
+  int register3 = register_bank.get_value(3);
+  int register1 = register_bank.get_value(1);
   if (op == "ADD") {
-    int register2 = register_bank.get_value(2);
-    int register3 = register_bank.get_value(3);
-    int register1 = register_bank.get_value(1);
-
-    int result = ULA(register_bank.get_value(register2),
-                     register_bank.get_value(register3), '+');
-
-    register_bank.set_value(register1, result);
+    result = ULA(register_bank.get_value(register2),
+                 register_bank.get_value(register3), '+');
+    ValueToWrite.first=true;
+  } else if (op == "SUB") {
+    result = ULA(register_bank.get_value(register2),
+                 register_bank.get_value(register3), '-');
+    ValueToWrite.first=true;
+  } else if (op == "MUL") {
+    result = ULA(register_bank.get_value(register2),
+                 register_bank.get_value(register3), '*');
+    ValueToWrite.first=true;
+  } else if (op == "DIV") {
+    result = ULA(register_bank.get_value(register2),
+                 register_bank.get_value(register3), '/');
+    ValueToWrite.first=true;
   }
-
-  if (op == "SUB") {
-    int register2 = register_bank.get_value(2);
-    int register3 = register_bank.get_value(3);
-    int register1 = register_bank.get_value(1);
-
-    int result = ULA(register_bank.get_value(register2),
-                     register_bank.get_value(register3), '-');
-
-    register_bank.set_value(register1, result);
-  }
-
-  if (op == "MUL") {
-    int register2 = register_bank.get_value(2);
-    int register3 = register_bank.get_value(3);
-    int register1 = register_bank.get_value(1);
-
-    int result = ULA(register_bank.get_value(register2),
-                     register_bank.get_value(register3), '*');
-                
-    register_bank.set_value(register1, result);
-  }
-
-  if (op == "DIV") {
-    int register2 = register_bank.get_value(2);
-    int register3 = register_bank.get_value(3);
-    int register1 = register_bank.get_value(1);
-
-    int result = ULA(register_bank.get_value(register2),
-                     register_bank.get_value(register3), '/');
-                
-    register_bank.set_value(register1, result);
-  }
+  ValueToWrite.second=result;
 }
 
 void CPU::MemoryAccess(RAM &ram) {
   cout << "Memory Access" << endl;
 
   if (op == "LOAD") {
-    register_bank.set_value(register_bank.get_value(2),
-                            ram.get_value(register_bank.get_value(3)));
-  }
-
-  if (op == "ILOAD") {
-    register_bank.set_value(register_bank.get_value(1),
-                            register_bank.get_value(2));
-  }
-
-  if (op == "STORE") {
+    ValueToWrite={true,ram.get_value(register_bank.get_value(2))};
+  } else if (op == "ILOAD") {
+    ValueToWrite={true,register_bank.get_value(2)};
+  } else if (op == "STORE") {
     ram.set_value(register_bank.get_value(2),
                   register_bank.get_value(register_bank.get_value(1)));
   }
@@ -126,4 +99,11 @@ void CPU::MemoryAccess(RAM &ram) {
   ram.print();
 
   register_bank.print();
+}
+
+void CPU::WriteBack() {
+  if (ValueToWrite.first==true) {
+    register_bank.set_value(register_bank.get_value(1), ValueToWrite.second);
+    ValueToWrite.first = false;
+  }
 }

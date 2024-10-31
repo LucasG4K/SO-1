@@ -13,6 +13,7 @@ using namespace std;
 class CPU {
  private:
   int PC = 0;
+  pair<bool,int> ValueToWrite;
   RegisterBank register_bank;
   string active_instruction;
   string op;
