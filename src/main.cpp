@@ -28,6 +28,7 @@ int main() {
     cpu.InstructionDecode();
     cpu.Execute();
     cpu.MemoryAccess(ram);
+    cpu.WriteBack();
 
     clock++;
   }
