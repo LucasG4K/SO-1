@@ -66,3 +66,36 @@
         BERTINI, Luciano. <strong>Capítulo 5 Pipeline</strong>. 2019. Disponível em: <a href="https://www.professores.uff.br/lbertini/wp-content/uploads/sites/108/2017/08/Cap-5-Pipeline.pdf">https://www.professores.uff.br/lbertini/wp-content/uploads/sites/108/2017/08/Cap-5-Pipeline.pdf</a>. Acesso em: 24 out. 2024.
     </p>
 </section>
+
+
+ILOAD $register valor   // Colocar o valor no registrador
+
+LOAD $register $ram     // Colocar valor da ram no registrador 
+
+STORE $register $ram    // Colocar valor do registrador na ram
+
+ADD $register1 $register2 $register3 // register1 = register2 + register3
+
+SUB $register1 $register2 $register3 // register1 = register2 - register3
+
+MUL $register1 $register2 $register3 // register1 = register2 * register3
+
+DIV $register1 $register2 $register3 // register1 = register2 / register3
+
+LOOP valor\
+    //\
+    //\
+END
+
+IF condicao\
+    //\
+    //\
+END
+
+IF condicao\
+    //\
+    //\
+ELSE\
+    //\
+    //\
+END
