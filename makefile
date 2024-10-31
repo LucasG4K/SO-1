@@ -1,5 +1,5 @@
 CXX      := -g++
-CXXFLAGS := -g -Wall -fsanitize=address,undefined
+#CXXFLAGS := -g -Wall -fsanitize=address,undefined
 LDFLAGS  := -lstdc++ -lm
 BUILD    := ./build
 OBJ_DIR  := $(BUILD)/objects
