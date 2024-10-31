@@ -1,10 +1,14 @@
 #include "CPU.hpp"
 
 int ULA(int op1, int op2, char oper) {
-  if (oper == '+')
-    return op1 + op2;
-  else if (oper == '-')
-    return op1 - op2;
+    if (oper == '+')
+        return op1 + op2;
+    else if (oper == '-')
+        return op1 - op2;
+    else if (oper == '*')
+        return op1 * op2;
+    else if (oper == '/')
+        return op1 / op2;
   return 0;
 }
 
@@ -75,6 +79,28 @@ void CPU::Execute()  // Unidade de controle
     int result = ULA(register_bank.get_value(register2),
                      register_bank.get_value(register3), '-');
 
+    register_bank.set_value(register1, result);
+  }
+
+  if (op == "MUL") {
+    int register2 = register_bank.get_value(2);
+    int register3 = register_bank.get_value(3);
+    int register1 = register_bank.get_value(1);
+
+    int result = ULA(register_bank.get_value(register2),
+                     register_bank.get_value(register3), '*');
+                
+    register_bank.set_value(register1, result);
+  }
+
+  if (op == "DIV") {
+    int register2 = register_bank.get_value(2);
+    int register3 = register_bank.get_value(3);
+    int register1 = register_bank.get_value(1);
+
+    int result = ULA(register_bank.get_value(register2),
+                     register_bank.get_value(register3), '/');
+                
     register_bank.set_value(register1, result);
   }
 }
