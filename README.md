@@ -60,6 +60,107 @@
         </p>
     </div>
 </section>
+
+<section>
+
+## 🎞 Instruções Definidas para o Simulador
+
+### 1. ILOAD
+- **Formato**: ILOAD <dest> <valor>
+- **Descrição**: Carrega um valor imediato no registrador <dest>.
+- **Exemplo**: ILOAD 16 10
+  - **Explicação**: Carrega o valor 10 no registrador 16.
+
+### 2. ADD
+- **Formato**: ADD <dest> <src1> <src2>
+- **Descrição**: Soma o valor dos registradores <src1> e <src2> e armazena o resultado em <dest>.
+- **Exemplo**: ADD 18 16 17
+  - **Explicação**: Soma o valor nos registradores 16 e 17 e armazena o resultado no registrador 18.
+
+### 3. STORE
+- **Formato**: STORE <src> <endereco>
+- **Descrição**: Armazena o valor do registrador <src> na posição de memória <endereco>.
+- **Exemplo**: STORE 18 16
+  - **Explicação**: Armazena o valor do registrador 18 na posição de memória definida pelo valor no registrador 16.
+
+### 4. BEQ (Branch if Equal)
+- **Formato**: BEQ <reg1> <reg2> <label>
+- **Descrição**: Se os valores de <reg1> e <reg2> são iguais, o programa salta para a instrução de número <label>.
+- **Exemplo**: BEQ 16 17 9
+  - **Explicação**: Se o valor no registrador 16 for igual ao valor no registrador 17, o programa pula para a linha 9 do código.
+
+### 5. J (Jump)
+- **Formato**: J <label>
+- **Descrição**: Altera o fluxo de execução do código para a linha especificada por <label>.
+- **Exemplo**: J 5
+  - **Explicação**: Altera o fluxo de execução para a linha 5.
+
+### 6. SUB
+- **Formato**: SUB <dest> <src1> <src2>
+- **Descrição**: Subtrai o valor em <src2> do valor em <src1> e armazena o resultado em <dest>.
+- **Exemplo**: SUB 18 16 17
+  - **Explicação**: Subtrai o valor no registrador 17 do valor no registrador 16 e armazena o resultado em 18.
+
+### 7. MUL
+- **Formato**: MUL <dest> <src1> <src2>
+- **Descrição**: Multiplica o valor dos registradores <src1> e <src2> e armazena o resultado em <dest>.
+- **Exemplo**: MUL 18 16 17
+  - **Explicação**: Multiplica os valores nos registradores 16 e 17 e armazena o resultado em 18.
+
+---
+
+## Análise Detalhada de Código 
+
+O arquivo codigo.txt contém o código de instruções que será executado pelo simulador.
+Abaixo, segue a explicação de cada linha de um código de exemplo para detalhar a execução do programa:
+
+````plaintext
+    ILOAD 16 10
+    ILOAD 17 12
+    ADD 18 16 17
+    STORE 18 16
+    BEQ 16 17 9
+    ILOAD 18 1
+    ADD 16 18 16
+    J 5
+    SUB 18 16 17
+    MUL 18 16 17
+````
+
+### Explicando o código:
+
+1. **`ILOAD 16 10`**
+   - Carrega o valor `10` no registrador `16`.
+
+2. **`ILOAD 17 12`**
+   - Carrega o valor `12` no registrador `17`.
+
+3. **`ADD 18 16 17`**
+   - Soma os valores dos registradores `16` e `17` (`10 + 12 = 22`) e armazena o resultado no registrador `18`.
+
+4. **`STORE 18 16`**
+   - Armazena o valor do registrador `18` (`22`) na posição de memória cujo endereço está armazenado no registrador `16` (`10`).
+
+5. **`BEQ 16 17 9`**
+   - Se os valores dos registradores `16` e `17` forem iguais, o fluxo de execução salta para a linha `9`. Como os valores são diferentes (`10` e `12`), o código continua na próxima linha.
+
+6. **`ILOAD 18 1`**
+   - Carrega o valor `1` no registrador `18`.
+
+7. **`ADD 16 18 16`**
+   - Soma o valor do registrador `18` (`1`) ao valor do registrador `16` (`10`), resultando em `11`, e armazena o resultado no registrador `16`.
+
+8. **`J 5`**
+   - Salta para a linha `5` do código, voltando para a instrução `BEQ 16 17 9`. Este salto cria um loop, verificando continuamente se os valores dos registradores `16` e `17` são iguais.
+
+9. **`SUB 18 16 17`**
+   - Caso o loop seja quebrado (valores iguais), esta linha executará a subtração do valor no registrador `17` (`12`) do valor no registrador `16`, com o resultado armazenado no registrador `18`.
+
+10. **`MUL 18 16 17`**
+    - Multiplica os valores dos registradores `16` e `17`
+
+</section>
+
 <section>
     <h2>📚 Referências</h2>
     <p>
@@ -68,34 +169,3 @@
 </section>
 
 
-ILOAD $register valor   // Colocar o valor no registrador
-
-LOAD $register $ram     // Colocar valor da ram no registrador 
-
-STORE $register $ram    // Colocar valor do registrador na ram
-
-ADD $register1 $register2 $register3 // register1 = register2 + register3
-
-SUB $register1 $register2 $register3 // register1 = register2 - register3
-
-MUL $register1 $register2 $register3 // register1 = register2 * register3
-
-DIV $register1 $register2 $register3 // register1 = register2 / register3
-
-LOOP valor\
-    //\
-    //\
-END
-
-IF condicao\
-    //\
-    //\
-END
-
-IF condicao\
-    //\
-    //\
-ELSE\
-    //\
-    //\
-END
