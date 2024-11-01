@@ -66,44 +66,44 @@
 ## 🎞 Instruções Definidas para o Simulador
 
 ### 1. ILOAD
-- **Formato**: ILOAD <dest> <valor>
-- **Descrição**: Carrega um valor imediato no registrador <dest>.
+- **Formato**: ILOAD \<dest\> \<valor\>
+- **Descrição**: Carrega um valor imediato no registrador \<dest\>.
 - **Exemplo**: ILOAD 16 10
   - **Explicação**: Carrega o valor 10 no registrador 16.
 
 ### 2. ADD
-- **Formato**: ADD <dest> <src1> <src2>
-- **Descrição**: Soma o valor dos registradores <src1> e <src2> e armazena o resultado em <dest>.
+- **Formato**: ADD \<dest\> \<src1\> \<src2\>
+- **Descrição**: Soma o valor dos registradores \<src1\> e \<src2\> e armazena o resultado em \<dest\>.
 - **Exemplo**: ADD 18 16 17
   - **Explicação**: Soma o valor nos registradores 16 e 17 e armazena o resultado no registrador 18.
 
 ### 3. STORE
-- **Formato**: STORE <src> <endereco>
-- **Descrição**: Armazena o valor do registrador <src> na posição de memória <endereco>.
+- **Formato**: STORE \<src\> \<endereco\>
+- **Descrição**: Armazena o valor do registrador \<src\> na posição de memória \<endereco\>.
 - **Exemplo**: STORE 18 16
   - **Explicação**: Armazena o valor do registrador 18 na posição de memória definida pelo valor no registrador 16.
 
 ### 4. BEQ (Branch if Equal)
-- **Formato**: BEQ <reg1> <reg2> <label>
-- **Descrição**: Se os valores de <reg1> e <reg2> são iguais, o programa salta para a instrução de número <label>.
+- **Formato**: BEQ \<reg1\> \<reg2\> \<label\>
+- **Descrição**: Se os valores de \<reg1\> e \<reg2\> são iguais, o programa salta para a instrução de número <label>.
 - **Exemplo**: BEQ 16 17 9
   - **Explicação**: Se o valor no registrador 16 for igual ao valor no registrador 17, o programa pula para a linha 9 do código.
 
 ### 5. J (Jump)
-- **Formato**: J <label>
-- **Descrição**: Altera o fluxo de execução do código para a linha especificada por <label>.
+- **Formato**: J \<label\>
+- **Descrição**: Altera o fluxo de execução do código para a linha especificada por \<label\>.
 - **Exemplo**: J 5
   - **Explicação**: Altera o fluxo de execução para a linha 5.
 
 ### 6. SUB
-- **Formato**: SUB <dest> <src1> <src2>
-- **Descrição**: Subtrai o valor em <src2> do valor em <src1> e armazena o resultado em <dest>.
+- **Formato**: SUB \<dest\> \<src1\> \<src2\>
+- **Descrição**: Subtrai o valor em \<src2\> do valor em \<src1\> e armazena o resultado em \<dest\>.
 - **Exemplo**: SUB 18 16 17
   - **Explicação**: Subtrai o valor no registrador 17 do valor no registrador 16 e armazena o resultado em 18.
 
 ### 7. MUL
-- **Formato**: MUL <dest> <src1> <src2>
-- **Descrição**: Multiplica o valor dos registradores <src1> e <src2> e armazena o resultado em <dest>.
+- **Formato**: MUL \<dest\> \<src1\> \<src2\>
+- **Descrição**: Multiplica o valor dos registradores \<src1\> e \<src2\> e armazena o resultado em \<dest\>.
 - **Exemplo**: MUL 18 16 17
   - **Explicação**: Multiplica os valores nos registradores 16 e 17 e armazena o resultado em 18.
 
