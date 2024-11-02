@@ -2,6 +2,7 @@
 #define _RAM_HPP
 
 #include <iostream>
+#include "utils.hpp"
 
 using namespace std;
 
@@ -13,7 +14,7 @@ class RAM {
    RAM();  
    int get_value(int address);
    void set_value(int address, int value);  
-   void print(); 
+   void print(string& instruction); 
 };
 
 #endif 

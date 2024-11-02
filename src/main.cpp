@@ -1,35 +1,21 @@
 #include "CPU.hpp"
 #include "RAM.hpp"
 
-vector<string> read_ROM() {
-  ifstream codigo("./dataset/codigo.txt");
-  vector<string> retorno;
-  string temp;
-  while (getline(codigo, temp)) {
-    retorno.push_back(temp);
-  }
-  return retorno;
-}
-
 int main() {
-
-  int clock = 0;
   vector<string> instrucoes = read_ROM();
 
   CPU cpu;
 
   RAM ram;
 
-  // for(auto a : instrucoes) cout <<a << endl;
-
   while (cpu.InstructionFetch(instrucoes)) {
     cpu.InstructionDecode();
     cpu.Execute();
     cpu.MemoryAccess(ram);
     cpu.WriteBack();
-
-    clock+=5;
   }
-  
-  cout<<"CLOCK: "<<clock<<endl;
+
+  cpu.print_clock();
+
+  return 0;
 }
