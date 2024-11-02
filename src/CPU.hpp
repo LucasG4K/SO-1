@@ -1,8 +1,6 @@
 #ifndef _CPU
 #define _CPU
 
-// #include <bits/stdc++.h>
-
 #include <map>
 
 #include "Cache.hpp"
