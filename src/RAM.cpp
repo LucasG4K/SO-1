@@ -1,5 +1,6 @@
 #include "RAM.hpp"
 
+
 RAM::RAM() {
   for (int i = 0; i < 32; i++) {
     values[i] = 0;
@@ -19,9 +20,6 @@ void RAM::set_value(int address, int value) {
   }
 }
 
-void RAM::print() {
-  for (int i = 0; i < 32; i++) {
-    cout << "RAM " << i << " " << this->values[i] << endl;
-  }
-  cout << endl; 
+void RAM::print(string& instruction) {
+  writeRamToFile(instruction, values);
 }
