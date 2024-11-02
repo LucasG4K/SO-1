@@ -43,17 +43,17 @@ void CPU::InstructionDecode() {
   op = instruction_map[linha[0]];
 
   if (linha[1] != "!") {
-    register_bank.set_value(1, stoi(linha[1]));
+    set_register(1, stoi(linha[1]));
     register_bank.set_dirty(1);
   }
 
   if (linha[2] != "!") {
-    register_bank.set_value(2, stoi(linha[2]));
+    set_register(2, stoi(linha[2]));
     register_bank.set_dirty(2);
   }
 
   if (linha[3] != "!") {
-    register_bank.set_value(3, stoi(linha[3]));
+    set_register(3, stoi(linha[3]));
     register_bank.set_dirty(3);
   }
 

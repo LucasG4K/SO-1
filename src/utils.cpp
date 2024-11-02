@@ -1,5 +1,15 @@
 #include "utils.hpp"
 
+vector<string> read_ROM() {
+  ifstream codigo("./dataset/codigo.txt");
+  vector<string> retorno;
+  string temp;
+  while (getline(codigo, temp)) {
+    retorno.push_back(temp);
+  }
+  return retorno;
+}
+
 void writeRamToFile(string& instruction, int* ram) {
   ofstream outFile("output/ram.txt", ios::out);
 
