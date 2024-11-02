@@ -23,7 +23,7 @@
     </p>
     <h3>1. CPU</h3>
     <p>
-        A classe CPU é responsável pelo controle do fluxo de instruções. Vamos analisar cada função:
+        A classe CPU é responsável pelo controle do fluxo de instruções a partir das seguintes funções:
     </p>
     <ul>
         <li><strong>InstructionFetch()</strong>: Esta função lê a próxima instrução da ROM (conjunto de instruções armazenadas no arquivo codigo.txt) e a carrega para a execução. O Program Counter (PC) é incrementado a cada instrução buscada, até que todas as instruções sejam processadas.</li>
