@@ -1,6 +1,10 @@
 #include "CPU.hpp"
 
-int ULA(int op1, int op2, char oper) {
+map<string, InstructionType> instruction_map = {
+    {"ILOAD", ILOAD}, {"ADD", ADD}, {"STORE", STORE}, {"BEQ", BEQ},
+    {"J", J},         {"SUB", SUB}, {"MUL", MUL}};
+
+int CPU::ula(int op1, int op2, char oper) {
   if (oper == '+')
     return op1 + op2;
   else if (oper == '-')
@@ -12,40 +16,31 @@ int ULA(int op1, int op2, char oper) {
   return 0;
 }
 
-vector<string> split(const string &str) {
-  vector<string> result;
-  istringstream iss(str);
-  string word;
+void CPU::print_clock() { cout << "CLOCK: " << clock << endl; }
 
-  while (iss >> word) {
-    result.push_back(word);
-  }
+int CPU::get_register(int address) { return register_bank.get_value(address); }
 
-  while (result.size() < 4) {
-    result.push_back("!");
-  }
-
-  return result;
+void CPU::set_register(int address, int value) {
+  register_bank.set_value(address, value);
 }
 
 bool CPU::InstructionFetch(vector<string> codigo) {
-  if(PC<codigo.size()){
-    active_instruction = codigo[PC];
-    PC++;
+  if (PC >= codigo.size()) return false;
 
-    // dbg(PC);
-    // dbg(active_instruction);
-    return true;
-  }
-  else return false;
+  active_instruction = codigo[PC];
+
+  cout << active_instruction << endl;
+
+  PC++;
+  clock++;
+
+  return true;
 }
 
 void CPU::InstructionDecode() {
   vector<string> linha = split(active_instruction);
 
-  op = linha[0];
-
-  // for (auto l : linha) dbg(l);
+  op = instruction_map[linha[0]];
 
   if (linha[1] != "!") {
     register_bank.set_value(1, stoi(linha[1]));
@@ -61,77 +56,99 @@ void CPU::InstructionDecode() {
     register_bank.set_value(3, stoi(linha[3]));
     register_bank.set_dirty(3);
   }
+
+  clock++;
 }
 
 void CPU::Execute()  // Unidade de controle
 {
-  int register1 = register_bank.get_value(1);
-  int register2 = register_bank.get_value(2);
-  int register3 = register_bank.get_value(3);
-  int result = 0;
+  switch (op) {
+    case ADD: {
+      write_value = ula(get_register(get_register(2)),
+                        get_register(get_register(3)), '+');
 
-  if (op == "ADD") {
-    result = ULA(register_bank.get_value(register2),
-                 register_bank.get_value(register3), '+');
-    ValueToWrite.first = true;
-  } else if (op == "SUB") {
-    result = ULA(register_bank.get_value(register2),
-                 register_bank.get_value(register3), '-');
-    ValueToWrite.first = true;
-  } else if (op == "MUL") {
-    result = ULA(register_bank.get_value(register2),
-                 register_bank.get_value(register3), '*');
-    ValueToWrite.first = true;
-  } else if (op == "DIV") {
-    result = ULA(register_bank.get_value(register2),
-                 register_bank.get_value(register3), '/');
-    ValueToWrite.first = true;
-  } else if (op == "SLT") {
-    ValueToWrite.first = true;
-    if (register_bank.get_value(register2) <
-        register_bank.get_value(register3)) {
-      result = 1;
-    } else {
-      result = 0;
+      write_data = true;
+      break;
     }
-  } else if (op == "BNE") {
-    if (register_bank.get_value(register2) !=
-        register_bank.get_value(register1)) {
-      PC = register3 - 1;
+    case SUB: {
+      write_value = ula(get_register(get_register(2)),
+                        get_register(get_register(3)), '-');
+
+      write_data = true;
+      break;
     }
-  } else if (op == "BEQ") {
-    if (register_bank.get_value(register2) ==
-        register_bank.get_value(register1)) {
-      PC = register3 - 1;
+    case MUL: {
+      write_value = ula(get_register(get_register(2)),
+                        get_register(get_register(3)), '*');
+
+      write_data = true;
+      break;
     }
-  } else if (op == "J") {
-    PC = register1 - 1;
+    case DIV: {
+      write_value = ula(get_register(get_register(2)),
+                        get_register(get_register(3)), '/');
+
+      write_data = true;
+      break;
+    }
+    case SLT: {
+      write_value =
+          get_register(get_register(2)) < get_register(get_register(3));
+
+      write_data = true;
+      break;
+    }
+    case BNE: {
+      if (get_register(get_register(2)) != get_register(get_register(1))) {
+        PC = get_register(3) - 1;
+      }
+      break;
+    }
+    case BEQ: {
+      if (get_register(get_register(2)) == get_register(get_register(1))) {
+        PC = get_register(3) - 1;
+      }
+      break;
+    }
+    case J: {
+      PC = get_register(1) - 1;
+      break;
+    }
   }
 
-  ValueToWrite.second = result;
+  clock++;
 }
 
 void CPU::MemoryAccess(RAM &ram) {
-  // cout << "Memory Access" << endl;
+  switch (op) {
+    case LOAD: {
+      write_value = ram.get_value(get_register(2));
+      write_data = true;
+      clock++;
 
-  if (op == "LOAD") {
-    ValueToWrite = {true, ram.get_value(register_bank.get_value(2))};
-  } else if (op == "ILOAD") {
-    ValueToWrite = {true, register_bank.get_value(2)};
-  } else if (op == "STORE") {
-    ram.set_value(register_bank.get_value(2),
-                  register_bank.get_value(register_bank.get_value(1)));
+      break;
+    }
+    case ILOAD: {
+      write_value = get_register(2);
+      write_data = true;
+      clock++;
+
+      break;
+    }
+    case STORE: {
+      ram.set_value(get_register(2), get_register(get_register(1)));
+      clock++;
+
+      ram.print(active_instruction);
+      break;
+    }
   }
-
-  // ram.print();
-
 }
 
 void CPU::WriteBack() {
-  if (ValueToWrite.first == true) {
-    register_bank.set_value(register_bank.get_value(1), ValueToWrite.second);
-    ValueToWrite.first = false;
-  }
+  if (!write_data) return;
 
-  // register_bank.print();
+  set_register(get_register(1), write_value);
+  write_data = false;
+  clock++;
 }
