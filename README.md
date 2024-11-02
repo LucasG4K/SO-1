@@ -130,7 +130,7 @@
 
 ### 4. BEQ (Branch if Equal)
 - **Formato**: BEQ \<reg1\> \<reg2\> \<label\>
-- **Descrição**: Se os valores de \<reg1\> e \<reg2\> são iguais, o programa salta para a instrução de número <label>.
+- **Descrição**: Se os valores de \<reg1\> e \<reg2\> são iguais, o programa salta para a instrução de número \<label\>.
 - **Exemplo**: BEQ 16 17 9
   - **Explicação**: Se o valor no registrador 16 for igual ao valor no registrador 17, o programa pula para a linha 9 do código.
 
@@ -151,6 +151,24 @@
 - **Descrição**: Multiplica o valor dos registradores \<src1\> e \<src2\> e armazena o resultado em \<dest\>.
 - **Exemplo**: MUL 18 16 17
   - **Explicação**: Multiplica os valores nos registradores 16 e 17 e armazena o resultado em 18.
+
+### 8. DIV
+- **Formato**: DIV \<dest\> \<src1\> \<src2\>
+- **Descrição**:Divide o valor dos registradores \<src1\> e \<src2\> e armazena o resultado em \<dest\>.
+- **Exemplo**: DIV 18 16 17
+  - **Explicação**: Divide os valores nos registradores 16 e 17 e armazena o resultado em 18.
+
+### 9. BNE (Branch if Not Equal) 
+- **Formato**: BNE \<reg1\> \<reg2\> \<label\>
+- **Descrição**: Se os valores de \<reg1\> e \<reg2\> são diferentes, o programa salta para a instrução de número \<label\>.
+- **Exemplo**: BNE 16 17 9
+  - **Explicação**: Se o valor no registrador 16 for diferente do valor no registrador 17, o programa pula para a linha 9 do código.
+
+### 10. SLT (Set if Less Than)
+- **Formato**: SLT \<dest\> \<src1\> \<src2\>
+- **Descrição**: Compara os valores de \<src1\> e \<src2\>. Se o valor em \<src1\> for menor que o valor em \<src2\>, armazena 1 em \<dest\>; caso contrário, armazena 0.
+- **Exemplo**: SLT 18 16 17
+  - **Explicação**: Se o valor no registrador 16 for menor que o valor no registrador 17, armazena 1 no registrador 18; caso contrário, armazena 0.
 
 ---
 
