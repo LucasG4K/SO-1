@@ -15,7 +15,7 @@
 <section>
     <h2>🎞 Processamento</h2>
     <p>
-        Durante o deselvovimento do algoritimo apresentado nesse repositório, foi-se utilizado de três principais tecnologias: Visual Studio Code e WSL:Ubunto.
+        Durante o deselvovimento do algoritimo apresentado nesse repositório, foi-se utilizado de duas principais ferramentas de desenvolvimento: Visual Studio Code e WSL: Ubuntu.
     </p>
     <ul>
         <li>    
@@ -25,12 +25,16 @@
         </li>
         <li>
             <p>
-                O WSL é um método para se executar o Sistema Operaciona Linux dentro do Windows de forma muito facil. Essa platoforma se torna essencial para o desenvovimento em ambiente GNU Linux, evitando tarefas como a intalação de maquinas vituais, criação de dual booting no computador pessoal e entre outras coisas. Além disso, existem diversas vantagens como rodar programas em conjunto e compartihamento de localhost. Segue em anexo um  tutorial de download do WSL2 — <a href="https://youtu.be/hd6lxt5iVsg" target="_blank">Tutorial WSL2</a>.
+                O WSL é um método para se executar comandos Linux dentro do Windows de forma simplificada. Essa platoforma se torna essencial para o desenvovimento, evitando tarefas como a intalação de máquinas vituais e a criação de dual booting no computador pessoal. Nesse projeto, o WSL foi utilizado para compilar e executar o programa em C++ em um ambiente Linux através do Windows. Segue em anexo um  tutorial de download do WSL2 — <a href="https://youtu.be/hd6lxt5iVsg" target="_blank">Tutorial WSL2</a>.
             </p>
         </li>
     </ul>
+</section>
+
+<section>
+    <h2>🎞 Como executar </h2>
     <p>
-        O programa ainda possui um arquivo Makefile que realiza todo o procedimento de compilação e execução. Para tanto, temos as seguintes diretrizes de execução:
+        O projeto possui um arquivo Makefile que realiza todo o procedimento de compilação e execução. Para tanto, temos as seguintes diretrizes de execução para distribuições Linux:
     </p>
     <div align="center">
         <table>
