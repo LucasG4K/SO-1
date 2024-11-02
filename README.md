@@ -11,9 +11,46 @@
             Feito por <a href="https://www.linkedin.com/in/emanuel-vieira-tavares-019706291/" target="_blank">Emanuel Viera Tavares</a>, <a href="https://www.linkedin.com/in/gabriel-couto-582060200/" target="_blank">Gabriel Couto Assis</a>, <a href="https://www.linkedin.com/in/luan-santos-9bb01920b/" target="_blank">Luan Gonçalves Santos</a>, <a href="https://www.linkedin.com/in/lucas-s-gontijo/" target="_blank">Lucas de Souza Gontijo</a>, e <a href="https://www.linkedin.com/in/dev-vini-pereira/" target="_blank">Vinicius Alves Pereira</a>
          </p>   
     </div>
+    <p>
+        Dessa forma, o projeto consiste em um simulador básico de uma A rquitetura de Von Neuman com um pipeline que processa instruções MIPS em uma sequência de fases.
+    </p>
 </section>
+
 <section>
-    <h2>🎞 Processamento</h2>
+    <h2>📌Estrutura Geral</h2>
+    <p>
+        O simulador é composto por classes que representam a CPU, a memória RAM e um banco de registradores, além do código principal que executa as instruções a partir de um arquivo chamado codigo.txt. O simulador segue um fluxo básico de execução de instruções, semelhante ao ciclo de instruções de um processador com pipeline, com as fases de busca (fetch), decodificação (decode), execução (execute), acesso à memória (memory access), e escrita de volta (write back).
+    </p>
+    <h3>1. CPU</h3>
+    <p>
+        A classe CPU é responsável pelo controle do fluxo de instruções. Vamos analisar cada função:
+    </p>
+    <ul>
+        <li><strong>InstructionFetch()</strong>: Esta função lê a próxima instrução da ROM (conjunto de instruções armazenadas no arquivo codigo.txt) e a carrega para a execução. O Program Counter (PC) é incrementado a cada instrução buscada, até que todas as instruções sejam processadas.</li>
+        <li><strong>InstructionDecode()</strong>: Esta função separa a instrução ativa em partes, usando a função split(), para identificar a operação (op) e os operandos. Se o valor de um operando não for "!", o valor é armazenado no banco de registradores.</li>
+        <li><strong>Execute()</strong>: Esta função simula a Unidade Lógica e Aritmética (ULA), executando operações como ADD, SUB, MUL, DIV, SLT, BNE, BEQ, e J. As operações de comparação e salto alteram o valor do Program Counter (PC).</li>
+        <li><strong>MemoryAccess()</strong>: Esta função gerencia o acesso à memória, implementando as instruções LOAD, ILOAD e STORE. A memória RAM é usada para armazenar e recuperar valores.</li>
+        <li><strong>WriteBack()</strong>: Esta função escreve o valor calculado de volta no banco de registradores se houver um valor para ser escrito.</li>
+    </ul>
+    <h3> 2. RAM </h3>
+    <p>
+        A classe RAM simula a memória do sistema, com um array de 32 inteiros, onde cada posição pode ser lida ou escrita por meio de funções de acesso. O estado da RAM pode ser exibido na saída padrão.
+    </p>
+    <h3>3. RegisterBank</h3>
+    <p>
+        A classe RegisterBank simula o banco de registradores do processador, armazenando 32 registradores, cada um com um valor e um flag <em>dirty</em> que indica se o registrador foi alterado. Os registradores podem ser lidos e escritos por meio de funções de acesso.
+    </p>
+<!--     <h3>4. Funções Auxiliares</h3>
+    <ul>
+        <li><strong>ULA()</strong>: Simula a Unidade Lógica e Aritmética, realizando operações matemáticas básicas.</li>
+        <li><strong>split()</strong>: Separa uma string de instrução em partes, preenchendo com "!" se a instrução tiver menos de 4 componentes, o que é útil para decodificar as instruções.</li>
+    </ul> -->
+   
+
+</section>
+
+<section>
+    <h2>💻 Processamento</h2>
     <p>
         Durante o deselvovimento do algoritimo apresentado nesse repositório, foi-se utilizado de duas principais ferramentas de desenvolvimento: Visual Studio Code e WSL: Ubuntu.
     </p>
@@ -32,7 +69,7 @@
 </section>
 
 <section>
-    <h2>🎞 Como executar </h2>
+    <h2>⚙️Como executar </h2>
     <p>
         O projeto possui um arquivo Makefile que realiza todo o procedimento de compilação e execução. Para tanto, temos as seguintes diretrizes de execução para distribuições Linux:
     </p>
@@ -67,7 +104,7 @@
 
 <section>
 
-## 🎞 Instruções Definidas para o Simulador
+## 📝 Instruções Definidas para o Simulador
 
 ### 1. ILOAD
 - **Formato**: ILOAD \<dest\> \<valor\>
