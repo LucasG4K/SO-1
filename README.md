@@ -19,7 +19,7 @@
 <section>
     <h2>📌Estrutura Geral</h2>
     <p>
-        O simulador é composto por classes que representam a CPU, a memória RAM e um banco de registradores, além do código principal que executa as instruções a partir de um arquivo chamado codigo.txt. O simulador segue um fluxo básico de execução de instruções, semelhante ao ciclo de instruções de um processador com pipeline, com as fases de busca (fetch), decodificação (decode), execução (execute), acesso à memória (memory access), e escrita de volta (write back).
+        O simulador é composto por classes que representam a CPU, a memória RAM, memória Cache e um banco de registradores, além do código principal que executa as instruções a partir de um arquivo chamado codigo.txt. O simulador segue um fluxo básico de execução de instruções, semelhante ao ciclo de instruções de um processador com pipeline, com as fases de busca (fetch), decodificação (decode), execução (execute), acesso à memória (memory access), e escrita de volta (write back).
     </p>
     <h3>1. CPU</h3>
     <p>
@@ -40,7 +40,11 @@
     <p>
         A classe RegisterBank simula o banco de registradores do processador, armazenando 32 registradores, cada um com um valor e um flag <em>dirty</em> que indica se o registrador foi alterado. Os registradores podem ser lidos e escritos por meio de funções de acesso.
     </p>
-<!--     <h3>4. Funções Auxiliares</h3>
+    <h3>4. Cache</h3>
+    <p>
+        Na classe Cache, temos várias variáveis que desempenham papéis essenciais na gestão da memória cache. A constante <code>CACHE_SIZE</code> define o tamanho máximo da cache, limitando o número de entradas que ela pode armazenar a 32. Fora isso, a variável <code>cacheData</code> é um <code>unordered_map</code> que mapeia os endereços dos registradores (caso sejam alocados) para pares contendo o dado associado e um booleano que indica se esse dado foi modificado (ou seja, se ele deve ser escrito de volta na memória principal ao ser removido). Por fim, <code>fifoQueue</code> é uma fila que mantém a ordem dos endereços inseridos na cache, permitindo a implementação da política de substituição FIFO (First-In, First-Out), garantindo que o item mais antigo seja removido quando a cache atinge sua capacidade máxima. Visto que essa estrutura é um trabalho futuro, a classe Cache ainda não possuí nenhum metodo implementado.
+    </p>
+<!--     <h3>5. Funções Auxiliares</h3>
     <ul>
         <li><strong>ULA()</strong>: Simula a Unidade Lógica e Aritmética, realizando operações matemáticas básicas.</li>
         <li><strong>split()</strong>: Separa uma string de instrução em partes, preenchendo com "!" se a instrução tiver menos de 4 componentes, o que é útil para decodificar as instruções.</li>

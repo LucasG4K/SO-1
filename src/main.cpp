@@ -1,7 +1,6 @@
 #include "CPU.hpp"
 #include "RAM.hpp"
 
-
 vector<string> read_ROM() {
   ifstream codigo("./dataset/codigo.txt");
   vector<string> retorno;
@@ -31,5 +30,6 @@ int main() {
 
     clock+=5;
   }
+  
   cout<<"CLOCK: "<<clock<<endl;
 }

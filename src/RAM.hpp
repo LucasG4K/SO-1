@@ -1,27 +1,19 @@
-#ifndef _RAM
-#define _RAM
+#ifndef _RAM_HPP
+#define _RAM_HPP
 
-#include <bits/stdc++.h>
+#include <iostream>
 
 using namespace std;
 
 class RAM {
-    private:
+  private:
     int values[32];
 
-    public:
-    int get_value(int address) {
-        return values[address];
-    }
-    void set_value(int address, int value) {
-        this->values[address] = value;
-    }
-    void print() {
-        for (int i = 0; i < 32; i++) {
-            cout << "RAM " << i << " " << this->values[i] << endl;
-        }
-        cout << endl; 
-    }
+  public:
+   RAM();  
+   int get_value(int address);
+   void set_value(int address, int value);  
+   void print(); 
 };
 
-#endif
+#endif 
