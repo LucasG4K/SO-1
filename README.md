@@ -50,7 +50,7 @@
 </section>
 
 <section>
-    <h2>💻 Processamento</h2>
+    <h2>💻 Ferramentas Utilizadas</h2>
     <p>
         Durante o deselvovimento do algoritimo apresentado nesse repositório, foi-se utilizado de duas principais ferramentas de desenvolvimento: Visual Studio Code e WSL: Ubuntu.
     </p>
