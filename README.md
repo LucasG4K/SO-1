@@ -116,55 +116,61 @@
 - **Exemplo**: ILOAD 16 10
   - **Explicação**: Carrega o valor 10 no registrador 16.
 
-### 2. ADD
+### 2. LOAD
+- **Formato**: LOAD \<dest\> \<endereco\>
+- **Descrição**: Carrega o valor da posição de memória especificada por \<endereco\> no registrador \<dest\>.
+- **Exemplo**: LOAD 16 100
+  - **Explicação**: Carrega o valor da posição de memória 100 no registrador 16.
+
+### 3. ADD
 - **Formato**: ADD \<dest\> \<src1\> \<src2\>
 - **Descrição**: Soma o valor dos registradores \<src1\> e \<src2\> e armazena o resultado em \<dest\>.
 - **Exemplo**: ADD 18 16 17
   - **Explicação**: Soma o valor nos registradores 16 e 17 e armazena o resultado no registrador 18.
 
-### 3. STORE
+### 4. STORE
 - **Formato**: STORE \<src\> \<endereco\>
 - **Descrição**: Armazena o valor do registrador \<src\> na posição de memória \<endereco\>.
 - **Exemplo**: STORE 18 16
   - **Explicação**: Armazena o valor do registrador 18 na posição de memória definida pelo valor no registrador 16.
 
-### 4. BEQ (Branch if Equal)
+### 5. BEQ (Branch if Equal)
 - **Formato**: BEQ \<reg1\> \<reg2\> \<label\>
 - **Descrição**: Se os valores de \<reg1\> e \<reg2\> são iguais, o programa salta para a instrução de número \<label\>.
 - **Exemplo**: BEQ 16 17 9
   - **Explicação**: Se o valor no registrador 16 for igual ao valor no registrador 17, o programa pula para a linha 9 do código.
 
-### 5. J (Jump)
+### 6. J (Jump)
 - **Formato**: J \<label\>
 - **Descrição**: Altera o fluxo de execução do código para a linha especificada por \<label\>.
 - **Exemplo**: J 5
   - **Explicação**: Altera o fluxo de execução para a linha 5.
 
-### 6. SUB
+### 7. SUB
 - **Formato**: SUB \<dest\> \<src1\> \<src2\>
 - **Descrição**: Subtrai o valor em \<src2\> do valor em \<src1\> e armazena o resultado em \<dest\>.
 - **Exemplo**: SUB 18 16 17
   - **Explicação**: Subtrai o valor no registrador 17 do valor no registrador 16 e armazena o resultado em 18.
 
-### 7. MUL
+### 8. MUL
 - **Formato**: MUL \<dest\> \<src1\> \<src2\>
 - **Descrição**: Multiplica o valor dos registradores \<src1\> e \<src2\> e armazena o resultado em \<dest\>.
 - **Exemplo**: MUL 18 16 17
   - **Explicação**: Multiplica os valores nos registradores 16 e 17 e armazena o resultado em 18.
 
-### 8. DIV
+### 9. DIV
 - **Formato**: DIV \<dest\> \<src1\> \<src2\>
 - **Descrição**:Divide o valor dos registradores \<src1\> e \<src2\> e armazena o resultado em \<dest\>.
 - **Exemplo**: DIV 18 16 17
   - **Explicação**: Divide os valores nos registradores 16 e 17 e armazena o resultado em 18.
 
-### 9. BNE (Branch if Not Equal) 
+### 10. BNE (Branch if Not Equal) 
 - **Formato**: BNE \<reg1\> \<reg2\> \<label\>
 - **Descrição**: Se os valores de \<reg1\> e \<reg2\> são diferentes, o programa salta para a instrução de número \<label\>.
 - **Exemplo**: BNE 16 17 9
   - **Explicação**: Se o valor no registrador 16 for diferente do valor no registrador 17, o programa pula para a linha 9 do código.
 
-### 10. SLT (Set if Less Than)
+### 11. SLT (Set if Less Than)
 - **Formato**: SLT \<dest\> \<src1\> \<src2\>
 - **Descrição**: Compara os valores de \<src1\> e \<src2\>. Se o valor em \<src1\> for menor que o valor em \<src2\>, armazena 1 em \<dest\>; caso contrário, armazena 0.
 - **Exemplo**: SLT 18 16 17
@@ -221,6 +227,31 @@ Abaixo, segue a explicação de cada linha de um código de exemplo para detalha
 
 10. **`MUL 18 16 17`**
     - Multiplica os valores dos registradores `16` e `17`
+
+## Instrução de Loop 
+É possível usar uma combinação das instruções BEQ, ILOAD, ADD, e J para criar um loop no simulador. A seguir, explicamos como funciona o loop representado pelo trecho:
+
+````plaintext
+    BEQ 16 17 9
+    ILOAD 18 1
+    ADD 16 18 16
+    J 5
+````
+### Descrição do funcionamento:
+
+**`BEQ 16 17 9`** <br>
+ Esta instrução verifica se os valores nos registradores 16 e 17 são iguais. Se forem, o programa pula para a linha 9, o que, neste caso, significa sair do loop. Se não forem iguais, o código continua com as próximas instruções.
+
+**`ILOAD 18 1`** <br>
+ Carrega o valor 1 no registrador 18.
+
+**`ADD 16 18 16`** <br>
+ Soma o valor no registrador 18 (que é 1) ao valor no registrador 16 e armazena o resultado em 16. Isso incrementa o valor em 16 por 1.
+
+**`J 5`** <br>
+ Salta para a linha 5, onde a instrução BEQ é executada novamente, formando um loop que continua até que o valor no registrador 16 se iguale ao valor no registrador 17.
+
+
 
 </section>
 
