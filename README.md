@@ -12,7 +12,7 @@
          </p>   
     </div>
     <p>
-        Dessa forma, o projeto consiste em um simulador básico de uma A rquitetura de Von Neuman com um pipeline que processa instruções MIPS em uma sequência de fases.
+        Dessa forma, o projeto consiste em um simulador básico de uma Arquitetura de Von Neuman com um pipeline que processa instruções MIPS em uma sequência de fases, desenvolvido na linguagem C++.
     </p>
 </section>
 
