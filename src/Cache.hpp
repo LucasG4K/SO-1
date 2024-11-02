@@ -3,20 +3,21 @@
 
 #include <unordered_map>
 #include <queue>
+#include "RAM.hpp"
 
 using namespace std;
 
 class Cache {
  private:
   static const int CACHE_SIZE = 32;
-  unordered_map<int, pair<int, bool>> cacheData; 
+  unordered_map<int, pair<int, bool>> cacheData; // address, {value, dirty}
   queue<int> fifoQueue;
-  void remove();
+  void remove(RAM &ram);
 
  public:
   Cache();
-  void read(int address, int& data);
-  void write(int address, int data); 
+  bool read(int address, int& data, RAM &ram);
+  void write(int address, int data, RAM &ram); 
 };
 
 #endif  

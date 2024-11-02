@@ -2,6 +2,7 @@
 #include "RAM.hpp"
 
 int main() {
+  int clock = 0;
   vector<string> instrucoes = read_ROM();
 
   CPU cpu;
@@ -13,9 +14,10 @@ int main() {
     cpu.Execute();
     cpu.MemoryAccess(ram);
     cpu.WriteBack();
+    clock+=5;
   }
 
-  cpu.print_clock();
+  cout << "CLOCK: " << clock << endl;
 
   return 0;
 }

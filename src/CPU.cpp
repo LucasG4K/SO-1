@@ -16,7 +16,6 @@ int CPU::ula(int op1, int op2, char oper) {
   return 0;
 }
 
-void CPU::print_clock() { cout << "CLOCK: " << clock << endl; }
 
 int CPU::get_register(int address) { return register_bank.get_value(address); }
 
@@ -32,7 +31,6 @@ bool CPU::InstructionFetch(vector<string> codigo) {
   cout << active_instruction << endl;
 
   PC++;
-  clock++;
 
   return true;
 }
@@ -57,7 +55,6 @@ void CPU::InstructionDecode() {
     register_bank.set_dirty(3);
   }
 
-  clock++;
 }
 
 void CPU::Execute()  // Unidade de controle
@@ -116,7 +113,6 @@ void CPU::Execute()  // Unidade de controle
     }
   }
 
-  clock++;
 }
 
 void CPU::MemoryAccess(RAM &ram) {
@@ -124,20 +120,17 @@ void CPU::MemoryAccess(RAM &ram) {
     case LOAD: {
       write_value = ram.get_value(get_register(2));
       write_data = true;
-      clock++;
 
       break;
     }
     case ILOAD: {
       write_value = get_register(2);
       write_data = true;
-      clock++;
 
       break;
     }
     case STORE: {
       ram.set_value(get_register(2), get_register(get_register(1)));
-      clock++;
 
       ram.print(active_instruction);
       break;
@@ -150,5 +143,4 @@ void CPU::WriteBack() {
 
   set_register(get_register(1), write_value);
   write_data = false;
-  clock++;
 }

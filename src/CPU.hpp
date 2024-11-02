@@ -50,7 +50,6 @@ class CPU {
   int get_register(int address);
   void set_register(int address, int value);
 
-  void print_clock();
 };
 
 #endif
