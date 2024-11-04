@@ -32,8 +32,7 @@ class CPU {
 
   bool write_data;
   int write_value;
-
-  Cache cache;
+  
   RegisterBank register_bank;
   string active_instruction;
   int op;
@@ -42,7 +41,7 @@ class CPU {
   bool InstructionFetch(vector<string> rom);
   void InstructionDecode();
   void Execute();
-  void MemoryAccess(RAM& ram);
+  void MemoryAccess(RAM& ram, Cache &cache);
   void WriteBack();
 
   int ula(int op1, int op2, char oper);

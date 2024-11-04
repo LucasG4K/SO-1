@@ -115,28 +115,28 @@ void CPU::Execute()  // Unidade de controle
 
 }
 
-void CPU::MemoryAccess(RAM &ram) {
+void CPU::MemoryAccess(RAM &ram, Cache &cache) {
   switch (op) {
-    case LOAD: {
-      write_value = ram.get_value(get_register(2));
+    case LOAD: {      
+      write_value = cache.read(get_register(2), ram);
       write_data = true;
-
       break;
     }
+
     case ILOAD: {
       write_value = get_register(2);
       write_data = true;
-
       break;
     }
-    case STORE: {
-      ram.set_value(get_register(2), get_register(get_register(1)));
 
+    case STORE: {
+      cache.write(get_register(2), get_register(get_register(1)), ram); // escreve na cache e na ram
       ram.print(active_instruction);
       break;
     }
   }
 }
+
 
 void CPU::WriteBack() {
   if (!write_data) return;
