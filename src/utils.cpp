@@ -1,27 +1,20 @@
 #include "utils.hpp"
 
-vector<string> read_ROM() {
-  ifstream codigo("./dataset/codigo.txt");
-  vector<string> retorno;
-  string temp;
-  while (getline(codigo, temp)) {
-    retorno.push_back(temp);
-  }
-  return retorno;
+vector<string> read_ROM(string nameFile) {
 }
 
-void writeRamToFile(string& instruction, int* ram) {
+void writeRamToFile(string& instruction, pair<int,bool>* ram) {
   ofstream outFile("output/ram.txt", ios::out);
 
   if (outFile.is_open()) {
     outFile << instruction << endl;
 
-    for (int i = 0; i < 32; i++) outFile << "0x" << i << " " << ram[i] << endl;
+    for (int i = 0; i < 32; i++) outFile << "0x" << i << " " << ram[i].first << " " << ram[i].second << endl;
 
     outFile << endl << endl;
     outFile.close();
   } else {
-    cout << "Unable to open file: ram.txt" << std::endl;
+    cout << "Unable to open file: ram.txt" << endl;
   }
 }
 

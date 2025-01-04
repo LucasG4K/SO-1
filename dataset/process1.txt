@@ -1,4 +1,7 @@
-ILOAD 12 54
+Name - Codigo1
+ID - 19
+Ram - 10
+ILOAD 12 0
 ILOAD 13 3
 ILOAD 14 0
 ILOAD 15 1

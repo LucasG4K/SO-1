@@ -1,22 +1,13 @@
 #include "CPU.hpp"
 
 int main() {
-  int clock = 0;
-  vector<string> instrucoes = read_ROM();
-
   CPU cpu;
-  Cache cache;
-  RAM ram;
-
-  while (cpu.InstructionFetch(instrucoes)) {
-    cpu.InstructionDecode();
-    cpu.Execute();
-    cpu.MemoryAccess(ram, cache);
-    cpu.WriteBack();
-    clock+=5;
+  PCB processo1("3423");
+  PCB processo2("sada");
+  PCB processo3("athrt");
+  int processFinished=0;
+  while (processFinished<3)
+  {
+    cpu.ProcessCore();
   }
-
-  cout << "CLOCK: " << clock << endl;
-
-  return 0;
 }

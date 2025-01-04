@@ -1,19 +1,24 @@
 #ifndef _RAM_HPP
 #define _RAM_HPP
+#define RamSize 32
+#define NumRam 32
 
 #include <iostream>
+#include <stdexcept>
 #include "utils.hpp"
 
 using namespace std;
 
 class RAM {
   private:
-    int values[32];
+    pair<int,bool> ram[RamSize];
+    int ram_store[NumRam][RamSize];
 
   public:
    RAM();  
-   int get_value(int address);
-   void set_value(int address, int value);  
+   int Read(int address);
+   void Write_Update(int address, int value);  
+   void Delete(int address);  
    void print(string& instruction); 
 };
 

@@ -9,15 +9,17 @@ using namespace std;
 
 class Cache {
  private:
-  static const int CACHE_SIZE = 8;
+  RAM* ram;
+  static const int CACHE_SIZE = 64;
   unordered_map<int, pair<int, bool>> cacheData; // address, {value, dirty}
   queue<int> fifoQueue;
-  void remove(RAM &ram);
+  void remove();
 
  public:
   Cache();
-  bool read(int address, RAM &ram);
-  void write(int address, int data, RAM &ram);
+  Cache(RAM* ram);
+  bool read(int address);
+  void write(int address, int data);
   void printCache();
 };
 

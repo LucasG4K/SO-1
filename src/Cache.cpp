@@ -2,19 +2,21 @@
 #include <iostream>
 
 Cache::Cache() {}
+Cache::Cache(RAM* ram) {this->ram=ram;}
 
-bool Cache::read(int address, RAM &ram) {
+bool Cache::read(int address) {
   int cacheAddress = address % CACHE_SIZE;
 
   if (cacheData.count(address)) {
     return cacheData[cacheAddress].first;
   } else {
-    write(address, ram.get_value(address), ram);
-    return ram.get_value(address);
+    write(address, (*ram).Read(address));
+    return (*ram).Read(address);
   }
 }
 
-void Cache::write(int address, int data, RAM &ram) {
+void Cache::write(int address, int data) {
+  (*ram).Write_Update(address, data);
   int cacheAddress = address % CACHE_SIZE;
 
   if (cacheData.count(cacheAddress)) {
@@ -30,7 +32,7 @@ void Cache::write(int address, int data, RAM &ram) {
         if (fifoQueue.front() % CACHE_SIZE != cacheAddress)
           ref.push(fifoQueue.front());
         else 
-          ram.set_value(fifoQueue.front(), cacheData[cacheAddress].first);
+          (*ram).Write_Update(fifoQueue.front(), cacheData[cacheAddress].first);
         fifoQueue.pop();
       }
       fifoQueue = ref;
@@ -38,18 +40,17 @@ void Cache::write(int address, int data, RAM &ram) {
   }
 
   if (fifoQueue.size() >= CACHE_SIZE) {
-    remove(ram);
+    remove();
     cout << "ENDEREÇO CACHE CHEIO: ALOCANDO PARA RAM" << endl;
   }
 
   fifoQueue.push(address);
   cacheData[cacheAddress] = {data, true};
-
 }
 
 
 
-void Cache::remove(RAM &ram) {
+void Cache::remove() {
   if (fifoQueue.empty()) return;
 
   int ramAddress = fifoQueue.front();
@@ -57,7 +58,7 @@ void Cache::remove(RAM &ram) {
   fifoQueue.pop();
 
   if (cacheData[cacheAddress].second)
-    ram.set_value(ramAddress, cacheData[cacheAddress].first);
+    (*ram).Write_Update(ramAddress, cacheData[cacheAddress].first);
 
   cacheData.erase(cacheAddress);
 }

@@ -1,54 +1,19 @@
 #ifndef _CPU
 #define _CPU
+#define MultiCore 2
 
-#include <map>
-
-#include "Cache.hpp"
-#include "RAM.hpp"
-#include "RegisterBank.hpp"
-
-#define dbg(x) cout << #x << " = " << x << '\n';
-
-using namespace std;
-
-enum InstructionType {
-  LOAD,
-  ILOAD,
-  ADD,
-  STORE,
-  BEQ,
-  J,
-  SUB,
-  MUL,
-  DIV,
-  SLT,
-  BNE,
-};
+#include "Core.hpp"
+#include "PCB.hpp"
 
 class CPU {
- private:
-  int clock = 0;
-  int PC = 0;
-
-  bool write_data;
-  int write_value;
-  
-  RegisterBank register_bank;
-  string active_instruction;
-  int op;
-
- public:
-  bool InstructionFetch(vector<string> rom);
-  void InstructionDecode();
-  void Execute();
-  void MemoryAccess(RAM& ram, Cache &cache);
-  void WriteBack();
-
-  int ula(int op1, int op2, char oper);
-
-  int get_register(int address);
-  void set_register(int address, int value);
-
+  private:
+    RAM ram;
+    Core cores[MultiCore];
+    int Process_RAM[32] = { -1 };
+  public:
+    CPU();
+    void ProcessCore(PCB process);
+    int RamManager();
 };
 
 #endif
