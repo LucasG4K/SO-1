@@ -10,13 +10,12 @@ bool Cache::read(int address) {
   if (cacheData.count(address)) {
     return cacheData[cacheAddress].first;
   } else {
-    write(address, (*ram).Read(address));
+    writeInCache(address, (*ram).Read(address));
     return (*ram).Read(address);
   }
 }
 
-void Cache::write(int address, int data) {
-  (*ram).Write_Update(address, data);
+void Cache::writeInCache(int address, int data){
   int cacheAddress = address % CACHE_SIZE;
 
   if (cacheData.count(cacheAddress)) {
@@ -31,36 +30,19 @@ void Cache::write(int address, int data) {
       while (!fifoQueue.empty()) {
         if (fifoQueue.front() % CACHE_SIZE != cacheAddress)
           ref.push(fifoQueue.front());
-        else 
-          (*ram).Write_Update(fifoQueue.front(), cacheData[cacheAddress].first);
         fifoQueue.pop();
       }
       fifoQueue = ref;
     }
   }
 
-  if (fifoQueue.size() >= CACHE_SIZE) {
-    remove();
-    cout << "ENDEREÇO CACHE CHEIO: ALOCANDO PARA RAM" << endl;
-  }
-
   fifoQueue.push(address);
   cacheData[cacheAddress] = {data, true};
 }
 
-
-
-void Cache::remove() {
-  if (fifoQueue.empty()) return;
-
-  int ramAddress = fifoQueue.front();
-  int cacheAddress = ramAddress % CACHE_SIZE;
-  fifoQueue.pop();
-
-  if (cacheData[cacheAddress].second)
-    (*ram).Write_Update(ramAddress, cacheData[cacheAddress].first);
-
-  cacheData.erase(cacheAddress);
+void Cache::write(int address, int data, int quantumLeft) {
+  (*ram).Write_Update(address, data, quantumLeft);
+  writeInCache(address, data);
 }
 
 void Cache::printCache() {

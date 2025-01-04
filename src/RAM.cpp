@@ -4,7 +4,6 @@
 RAM::RAM() {
   for (int j = 0; j < RamSize; j++){
     this->ram[j].first = 0;
-    this->ram[j].second=false;
   }
 }
 
@@ -15,10 +14,12 @@ int RAM::Read(int address) {
   return 0;
 }
 
-void RAM::Write_Update(int address, int value) {
-  if (!(address < 0 || address >= 32) && !this->ram[address].second) {
-    this->ram[address].first = value;
-    this->ram[address].second=true;
+void RAM::Write_Update(int address, int value, int quantumLeft) {
+  if (!(address < 0 || address >= 32)) {
+    struct timespec timeoutTime;
+    timeoutTime.tv_sec = quantumLeft;
+    int checkLock = pthread_mutex_timedlock(&this->ram[address].second,&timeoutTime);
+    checkLock==0 ? this->ram[address].first = value : throw exception();
   }
   else{
     throw exception();
@@ -28,7 +29,7 @@ void RAM::Write_Update(int address, int value) {
 void RAM::Delete(int address) {
   if (!(address < 0 || address >= 32)) {
     this->ram[address].first = 0;
-    this->ram[address].second=false;
+    pthread_mutex_unlock(&this->ram[address].second);
   }
 }
 

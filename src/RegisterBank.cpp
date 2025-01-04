@@ -1,6 +1,6 @@
 #include "RegisterBank.hpp"
 
-RegisterBank::RegisterBank() { this->registers.resize(32); }
+RegisterBank::RegisterBank() { this->registers.resize(RegisterBankSize); }
 
 int RegisterBank::get_value(int address) {
   return this->registers[address].value;

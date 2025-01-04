@@ -1,19 +1,34 @@
 #include "CPU.hpp"
 
-CPU::CPU(){}
+CPU::CPU(){
+  for (auto &&i : this->cores)
+    i=Core(&ram);
+}
 
-void CPU::ProcessCore(PCB process){
-  int clock = 0;
+void CPU::ProcessCore(PCB* process){
+
+  if (process->get_state()!="blocked"){
+    // Escolhe um pedaço de ram pra guardar o processo
+    int ramProcess=RamManager();
+    if (ramProcess==-1)
+    {
+      cout<<"Nenhuma ram disponível"<<endl;
+      return;
+    }
+    else{
+      process->set_ram(ramProcess);
+    }
+  }
 
   // Escolhe um core pro processo
   Core selectedCore;
   bool foundCore=false;
   for (int i = 0; i < MultiCore; i++)
   {
-    if (this->cores[i].get_inUse()==false){
-        this->cores[i]=Core(&ram);
-        selectedCore=this->cores[i];
-        foundCore=true;
+    // Ve se o core esta sendo usado, e já trava ele se estiver
+    if (pthread_mutex_trylock(&cores->get_lock())==0){
+      selectedCore=this->cores[i];
+      foundCore=true;
     }
   }
   if (!foundCore)
@@ -21,31 +36,28 @@ void CPU::ProcessCore(PCB process){
     cout<<"Nenhum core disponível"<<endl;
     return;
   }
-
-  // Escolhe um pedaço de ram pra guardar o processo
-  int ramProcess=RamManager();
-  if (ramProcess==-1)
+  
+  try
   {
-    cout<<"Nenhuma ram disponível"<<endl;
-    return;
+    selectedCore.set_process(process);
+    while (selectedCore.InstructionFetch()) {
+      selectedCore.InstructionDecode();
+      selectedCore.Execute();
+      selectedCore.MemoryAccess();
+      selectedCore.WriteBack();
+      selectedCore.CheckQuantum();
+    }
   }
-
-  while (selectedCore.InstructionFetch(process.get_instruction())) {
-    selectedCore.InstructionDecode();
-    selectedCore.Execute();
-    selectedCore.MemoryAccess(ramProcess);
-    selectedCore.WriteBack();
-    clock+=5;
-  }
-
-  cout << "CLOCK: " << clock << endl;
+  catch(const exception& e){}  
 }
 
 int CPU::RamManager(){
-  for (int i = 1; i < NumRam; i++)
+  for (int i = 1; i < NumRamStorage; i++)
   {
-    if (Process_RAM[i]==-1)
+    if (Process_RAM[i] == false){
+      Process_RAM[i] = true;
       return i;
+    }
   }
   return -1;
 }

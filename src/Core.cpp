@@ -2,8 +2,7 @@
 
 Core::Core(){}
 Core::Core(RAM* ram){
-  this->cache=Cache(ram);
-  this->inUse=true;
+  this->cache=Cache(ram);  
 }
 
 map<string, InstructionType> instruction_map = {
@@ -22,8 +21,7 @@ int Core::ula(int op1, int op2, char oper) {
   return 0;
 }
 
-int Core::get_inUse(){return this->inUse;}
-void Core::switch_inUse(){this->inUse=!this->inUse;}
+pthread_mutex_t Core::get_lock(){return this->lock;}
 
 int Core::get_register(int address) { return register_bank.get_value(address); }
 
@@ -31,7 +29,14 @@ void Core::set_register(int address, int value) {
   register_bank.set_value(address, value);
 }
 
-bool Core::InstructionFetch(vector<string> codigo) {
+void Core::set_process(PCB* process) {
+  this->process=process;
+  this->process->unblock_process();
+  this->quantumStartTime=chrono::system_clock::now();
+}
+
+bool Core::InstructionFetch() {
+  vector<string> codigo = this->process->get_instruction();
   if (PC >= codigo.size()) return false;
 
   active_instruction = codigo[PC];
@@ -41,6 +46,7 @@ bool Core::InstructionFetch(vector<string> codigo) {
   PC++;
 
   return true;
+  CheckQuantum();
 }
 
 void Core::InstructionDecode() {
@@ -62,7 +68,7 @@ void Core::InstructionDecode() {
     set_register(3, stoi(linha[3]));
     register_bank.set_dirty(3);
   }
-
+  CheckQuantum();
 }
 
 void Core::Execute()  // Unidade de controle
@@ -120,10 +126,11 @@ void Core::Execute()  // Unidade de controle
       break;
     }
   }
-
+  CheckQuantum();
 }
 
-void Core::MemoryAccess(int ramProcess) {
+void Core::MemoryAccess() {
+  int quantumLeft = CheckQuantum();
   try
   {
     switch (op) {
@@ -140,8 +147,7 @@ void Core::MemoryAccess(int ramProcess) {
       }
 
       case STORE: {
-        cache.write(get_register(2), get_register(get_register(1))); // escreve na cache e na ram
-        //ram.print(ramProcess, active_instruction);
+        cache.write(get_register(2), get_register(get_register(1)),quantumLeft); // escreve na cache e na ram
         break;
       }
     }
@@ -149,8 +155,8 @@ void Core::MemoryAccess(int ramProcess) {
   catch(const exception& e)
   {
     cout << "ENDEREÇO DE RAM SENDO USADO POR OUTRO PROCESSO" << endl;
-    //BloquearProcesso
   }
+  CheckQuantum();
 }
 
 void Core::WriteBack() {
@@ -158,4 +164,16 @@ void Core::WriteBack() {
 
   set_register(get_register(1), write_value);
   write_data = false;
+  CheckQuantum();
+}
+
+int Core::CheckQuantum(){
+  auto now = chrono::system_clock::now();
+  auto quantumDuration = chrono::duration_cast<chrono::milliseconds>(now - this->quantumStartTime).count();
+  if(quantumDuration>this->process->get_quantum()){
+    cout << "QUANTUM ATINGIDO" << endl;
+    this->process->block_process(quantumDuration);
+    throw exception();
+  }
+  return this->process->get_quantum()-quantumDuration;
 }
