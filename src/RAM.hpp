@@ -10,13 +10,15 @@ using namespace std;
 class RAM {
   private:
     pair<int,pthread_mutex_t> ram[RamSize];
-    int ram_store[NumRamStorage][RamSize];
+    int ram_store[NumRamStorage][RamSize+2];
 
   public:
    RAM();  
    int Read(int address);
    void Write_Update(int address, int value, int quantumLeft);  
    void Delete(int address);  
+   void Store(int ramToStore,int address, int value);
+   int Load(int ramToLoad,int address);
    void print(string& instruction); 
 };
 

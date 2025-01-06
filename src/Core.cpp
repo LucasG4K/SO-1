@@ -24,6 +24,7 @@ int Core::ula(int op1, int op2, char oper) {
 pthread_mutex_t Core::get_lock(){return this->lock;}
 
 int Core::get_register(int address) { return register_bank.get_value(address); }
+int Core::get_PC() { return this->PC; }
 
 void Core::set_register(int address, int value) {
   register_bank.set_value(address, value);
@@ -33,6 +34,13 @@ void Core::set_process(PCB* process) {
   this->process=process;
   this->process->unblock_process();
   this->quantumStartTime=chrono::system_clock::now();
+}
+
+RegisterBank Core::get_registerBank(){ return this->register_bank; }
+
+void Core::set_registerBank(vector<int> registers) {
+  this->register_bank.set_registers(registers);
+  this->PC=registers.back();
 }
 
 bool Core::InstructionFetch() {
@@ -46,7 +54,6 @@ bool Core::InstructionFetch() {
   PC++;
 
   return true;
-  CheckQuantum();
 }
 
 void Core::InstructionDecode() {
@@ -68,7 +75,6 @@ void Core::InstructionDecode() {
     set_register(3, stoi(linha[3]));
     register_bank.set_dirty(3);
   }
-  CheckQuantum();
 }
 
 void Core::Execute()  // Unidade de controle
@@ -126,11 +132,12 @@ void Core::Execute()  // Unidade de controle
       break;
     }
   }
-  CheckQuantum();
 }
 
 void Core::MemoryAccess() {
-  int quantumLeft = CheckQuantum();
+  // Descobre quanto de quantum tem ainda para fazer a busca de recursos com time limit
+  int quantumDuration = GetDuration(this->quantumStartTime);
+  int quantumLeft = this->process->get_quantum()-quantumDuration;
   try
   {
     switch (op) {
@@ -154,9 +161,11 @@ void Core::MemoryAccess() {
   }
   catch(const exception& e)
   {
+    // Caso recurso não seja usado volta uma instrução e retorna
+    PC-=1;
     cout << "ENDEREÇO DE RAM SENDO USADO POR OUTRO PROCESSO" << endl;
+    throw GetDuration(this->quantumStartTime);
   }
-  CheckQuantum();
 }
 
 void Core::WriteBack() {
@@ -164,16 +173,18 @@ void Core::WriteBack() {
 
   set_register(get_register(1), write_value);
   write_data = false;
-  CheckQuantum();
 }
 
 int Core::CheckQuantum(){
-  auto now = chrono::system_clock::now();
-  auto quantumDuration = chrono::duration_cast<chrono::milliseconds>(now - this->quantumStartTime).count();
+  auto quantumDuration = GetDuration(this->quantumStartTime);
   if(quantumDuration>this->process->get_quantum()){
     cout << "QUANTUM ATINGIDO" << endl;
-    this->process->block_process(quantumDuration);
-    throw exception();
+    throw(quantumDuration);
   }
   return this->process->get_quantum()-quantumDuration;
+}
+
+int GetDuration(chrono::_V2::system_clock::time_point baseTime){
+  auto now = chrono::system_clock::now();
+  return chrono::duration_cast<chrono::milliseconds>(now - baseTime).count();
 }

@@ -49,3 +49,7 @@ vector<PCB*> getFilaProcessos(){
   }
   return filaProcessos;
 }
+
+void Success(string print){cout<<"Sucesso thread "<<pthread_self()<<": "<<print<<endl;}
+void Checkpoint(string print){cout<<"Checkpoint thread "<<pthread_self()<<": "<<print<<endl;}
+void Error(string print){cout<<"Erro thread "<<pthread_self()<<": "<<print<<endl;}

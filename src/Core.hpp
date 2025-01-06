@@ -33,24 +33,28 @@ class Core {
 
   // Usado para garatir o core pra cada thread
   pthread_mutex_t lock;
+
+  // Metódos usados internamente
+  int get_register(int address);
+  void set_register(int address, int value);
+  int ula(int op1, int op2, char oper);
+
  public:
   Core();
   Core(RAM* ram);
+
+  void set_process(PCB* process);
   bool InstructionFetch();
   void InstructionDecode();
   void Execute();
   void MemoryAccess();
   void WriteBack();
-
-  int ula(int op1, int op2, char oper);
+  int CheckQuantum();
 
   pthread_mutex_t get_lock();
-
-  int get_register(int address);
-  void set_register(int address, int value);
-
-  void set_process(PCB* process);
-  int CheckQuantum();
+  RegisterBank get_registerBank();
+  void set_registerBank(vector<int> registers);
+  int get_PC();
 };
 
 #endif

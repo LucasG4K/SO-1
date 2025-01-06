@@ -19,5 +19,8 @@ vector<string> read_ROM(string nameFile);
 void writeRamToFile(string& instruction, pair<int,pthread_mutex_t>* ram);
 vector<string> split(const string& str);
 vector<PCB*> getFilaProcessos();
+void Success(string print);
+void Checkpoint(string print);
+void Error(string print);
 
 #endif

@@ -19,6 +19,7 @@ class PCB {
     string state;
     int quantum;
     int ramSpace;
+    int pipelineStage;
 
     // Control
     chrono::_V2::system_clock::time_point startTime;
@@ -30,13 +31,21 @@ class PCB {
     int get_id();
     int get_quantum();
     string get_state();
+
+    // Espaço da RAM para ser guardado quando bloqueia
     void set_ram(int ramStorage);
     int get_ram();
+
+    // Mudar estado do processo
     void block_process(int time);
     void unblock_process();
     void start_process();
     void finish_process();
-    void add_quantum(int milliseconds);
+
+    // Fase de pipeline
+    void set_pipelineStage(int stage);
+    int get_pipelineStage();
+
 };
 
 #endif

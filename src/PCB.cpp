@@ -25,8 +25,12 @@ vector<string> PCB::get_instruction() {return this->instructions;}
 int PCB::get_id() {return this->id;}
 int PCB::get_quantum() {return this->quantum;}
 string PCB::get_state() {return this->state;}
+
 void PCB::set_ram(int ramStorage){this->ramSpace=ramStorage;};
 int PCB::get_ram() {return this->ramSpace;}
+
+void PCB::set_pipelineStage(int stage){this->pipelineStage=stage;};
+int PCB::get_pipelineStage() {return this->pipelineStage;}
 
 void PCB::block_process(int time){
     this->timeSpent+=time;

@@ -24,6 +24,9 @@ class RegisterBank {
   void set_dirty(int address);
   void set_clean(int address);
 
+  vector<Register> get_registers();
+  void set_registers(vector<int> registers);
+
   void print();
 };
 
