@@ -14,11 +14,11 @@ class CPU {
     bool SelectCore(Core* core);
 
     bool SelectRamStorage(PCB* process);
-    void StoreRegisterToRam(Core* selectedCore, int ramToStore);
-    void LoadRegisterFromRam(Core* selectedCore, int ramToStore);
   public:
     CPU();
     void ProcessCore(PCB* process);
+    void StoreRegisterToPCB(Core* selectedCore, PCB* process);
+    void LoadRegisterFromPCB(Core* selectedCore, PCB* process);
 };
 
 #endif

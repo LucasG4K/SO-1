@@ -52,7 +52,7 @@ class Core {
   int CheckQuantum();
 
   pthread_mutex_t get_lock();
-  RegisterBank get_registerBank();
+  vector<int> get_registerBank();
   void set_registerBank(vector<int> registers);
   int get_PC();
 };

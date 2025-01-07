@@ -6,20 +6,30 @@ CPU::CPU(){
 }
 
 void CPU::ProcessCore(PCB* process){
+  Checkpoint("Rodando Processo");
+  // Verifica status do processo, se tiver executando por outra thread retorna
+  if(process->get_state()=="executing") return;
+  else if (process->get_state()=="blocked"){
+    if(process->get_state()=="executing") return;
+    process->unblock_process();
+  }
+  else if(process->get_state()=="ready"){
+    if(process->get_state()=="executing") return;
+    process->start_process();
+  }
+
   // Seleciona core e ramstorage
   Core selectedCore;
   if(!SelectRamStorage(process)) return;
   if(!SelectCore(&selectedCore)) return;
-  
-  // Carrega registradores da ram e desbloqueia processo
-  if (process->get_state()=="blocked")
-  {
+
+  // Carrega registradores da ram 
+  if(process->get_state()=="blocked"){
     Checkpoint("Registradores carregando");
-    LoadRegisterFromRam(&selectedCore, process->get_ram());
-    process->unblock_process();
+    LoadRegisterFromPCB(&selectedCore, process);
     Success("Registradores carregados, processo desbloqueado");
   }
-
+  
   // Pipeline
   try
   {
@@ -36,7 +46,8 @@ void CPU::ProcessCore(PCB* process){
     // Finalizar processo
     this->Process_RAM[process->get_ram()]=false;
     process->finish_process();
-    pthread_mutex_unlock(&selectedCore.get_lock());
+    auto lock = selectedCore.get_lock();
+    pthread_mutex_unlock(&lock);
   }
   // Caso quantum seja atingido (ao buscar recurso ou por demorar mesmo)
   catch(int quantum){
@@ -44,9 +55,12 @@ void CPU::ProcessCore(PCB* process){
     // Bloqueia o processo
     process->block_process(quantum);
     // Guarda banco de registradores no storage RAM selecionada
-    StoreRegisterToRam(&selectedCore,process->get_ram());
+    StoreRegisterToPCB(&selectedCore,process);
+    // Libera espaços da ram usada
+    this->ram.FreeMemory(process->get_memoryUsage());
     // Libera Core
-    pthread_mutex_unlock(&selectedCore.get_lock());
+    auto lock = selectedCore.get_lock();
+    pthread_mutex_unlock(&lock);
   }  
 }
 
@@ -56,16 +70,19 @@ bool CPU::SelectCore(Core* core){
   for (int i = 0; i < MultiCore; i++)
   {
     // Ve se o core esta sendo usado, e já trava ele se estiver
-    if (pthread_mutex_trylock(&cores->get_lock())==0){
+    auto lock =cores->get_lock();
+    if (pthread_mutex_trylock(&lock)==0){
       (*core)=this->cores[i];
       foundCore=true;
+      return true;
     }
   }
   if (!foundCore)
   {
     Error("Nenhum core disponível");
-    return;
+    return false;
   }
+  return false;
 }
 
 // Escolhe um pedaço de ram pra guardar o processo caso seja a primeira vez executando, se todos estiverem cheios, retorna
@@ -87,22 +104,11 @@ bool CPU::SelectRamStorage(PCB* process){
 }
 
 // Guarda banco de registradores sequencialmente na ram
-void CPU::StoreRegisterToRam(Core* selectedCore, int ramToStore){
-  int index = 0;
-  for (auto &&i : (*selectedCore).get_registerBank().get_registers())
-  {
-    this->ram.Store(ramToStore,index,i.value);
-    index++;
-  }
-  this->ram.Store(ramToStore,index,selectedCore->get_PC());
+void CPU::StoreRegisterToPCB(Core* selectedCore, PCB* process){
+  process->set_registers(selectedCore->get_registerBank());
 }
 
 // Guarda banco de registradores sequencialmente na ram
-void CPU::LoadRegisterFromRam(Core* selectedCore, int ramToLoad){
-  vector<int> registers;
-  for (int i = 0; i < RegisterBankSize+1; i++)
-  {
-    registers.push_back(this->ram.Load(ramToLoad,i));
-  }
-  selectedCore->set_registerBank(registers);
+void CPU::LoadRegisterFromPCB(Core* selectedCore, PCB* process){
+  selectedCore->set_registerBank(process->get_registers());
 }

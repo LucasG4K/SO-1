@@ -1,6 +1,5 @@
 #ifndef _SO
 #define _SO
-#define endl '\n'
 
 #define MultiCore 2
 #define RamSize 32
@@ -15,7 +14,6 @@
 
 using namespace std;
 
-vector<string> read_ROM(string nameFile);
 void writeRamToFile(string& instruction, pair<int,pthread_mutex_t>* ram);
 vector<string> split(const string& str);
 vector<PCB*> getFilaProcessos();

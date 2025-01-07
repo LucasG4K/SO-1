@@ -19,7 +19,10 @@ class PCB {
     string state;
     int quantum;
     int ramSpace;
-    int pipelineStage;
+
+    // Registradores e memorias usadas
+    vector<int> registers;
+    vector<int> memoryUsage;
 
     // Control
     chrono::_V2::system_clock::time_point startTime;
@@ -42,9 +45,12 @@ class PCB {
     void start_process();
     void finish_process();
 
-    // Fase de pipeline
-    void set_pipelineStage(int stage);
-    int get_pipelineStage();
+    // Memoria e registradores
+    void set_registers(vector<int> registers);
+    vector<int> get_registers();
+    void add_memory(int registers);
+    vector<int> get_memoryUsage();
+
 
 };
 

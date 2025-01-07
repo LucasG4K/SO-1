@@ -1,20 +1,17 @@
 #include "SO.hpp"
 
-vector<string> read_ROM(string nameFile) {
-}
-
 void writeRamToFile(string& instruction, pair<int,pthread_mutex_t>* ram) {
   ofstream outFile("output/ram.txt", ios::out);
 
   if (outFile.is_open()) {
-    outFile << instruction << endl;
+    outFile << instruction << '\n';
 
-    for (int i = 0; i < 32; i++) outFile << "0x" << i << " " << ram[i].first << endl;
+    for (int i = 0; i < 32; i++) outFile << "0x" << i << " " << ram[i].first << '\n';
 
-    outFile << endl << endl;
+    outFile << '\n' << '\n';
     outFile.close();
   } else {
-    cout << "Unable to open file: ram.txt" << endl;
+    cout << "Unable to open file: ram.txt" << '\n';
   }
 }
 
@@ -45,11 +42,11 @@ vector<PCB*> getFilaProcessos(){
       }
     }
   } catch (const filesystem::filesystem_error& e) {
-    cerr << "Erro ao acessar pasta folder: " << e.what() << endl;
+    cerr << "Erro ao acessar pasta folder: " << e.what() << '\n';
   }
   return filaProcessos;
 }
 
-void Success(string print){cout<<"Sucesso thread "<<pthread_self()<<": "<<print<<endl;}
-void Checkpoint(string print){cout<<"Checkpoint thread "<<pthread_self()<<": "<<print<<endl;}
-void Error(string print){cout<<"Erro thread "<<pthread_self()<<": "<<print<<endl;}
+void Success(string print){cout<<"Sucesso thread "<<pthread_self()<<": "<<print<<'\n';}
+void Checkpoint(string print){cout<<"Checkpoint thread "<<pthread_self()<<": "<<print<<'\n';}
+void Error(string print){cout<<"Erro thread "<<pthread_self()<<": "<<print<<'\n';}

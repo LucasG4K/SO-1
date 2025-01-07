@@ -5,6 +5,7 @@ RAM::RAM() {
   for (int j = 0; j < RamSize; j++){
     this->ram[j].first = 0;
   }
+  this->filaProcessos=getFilaProcessos();
 }
 
 int RAM::Read(int address) {
@@ -37,9 +38,11 @@ void RAM::print(string& instruction) {
   writeRamToFile(instruction, ram);
 }
 
-void RAM::Store(int ramToStore,int address, int value){
-  this->ram_store[ramToStore][address]=value;
-}
-int RAM::Load(int ramToLoad,int address){
-  return this->ram_store[ramToLoad][address];
+void RAM::FreeMemory(vector<int> addresses){
+  for (auto &&i : addresses)
+  {
+    auto retorno=pthread_mutex_unlock(&this->ram[i].second);
+    if(retorno==1)
+      Error("Thread não contem o recurso "+i);
+  }
 }

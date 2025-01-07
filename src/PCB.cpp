@@ -29,8 +29,11 @@ string PCB::get_state() {return this->state;}
 void PCB::set_ram(int ramStorage){this->ramSpace=ramStorage;};
 int PCB::get_ram() {return this->ramSpace;}
 
-void PCB::set_pipelineStage(int stage){this->pipelineStage=stage;};
-int PCB::get_pipelineStage() {return this->pipelineStage;}
+void PCB::set_registers(vector<int> registers){this->registers=registers;};
+vector<int> PCB::get_registers() {return this->registers;}
+
+void PCB::add_memory(int memory){this->memoryUsage.push_back(memory);};
+vector<int> PCB::get_memoryUsage() {return this->memoryUsage;}
 
 void PCB::block_process(int time){
     this->timeSpent+=time;

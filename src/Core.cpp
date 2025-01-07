@@ -1,5 +1,10 @@
 #include "Core.hpp"
 
+int GetDuration(chrono::_V2::system_clock::time_point baseTime){
+  auto now = chrono::system_clock::now();
+  return chrono::duration_cast<chrono::milliseconds>(now - baseTime).count();
+}
+
 Core::Core(){}
 Core::Core(RAM* ram){
   this->cache=Cache(ram);  
@@ -36,7 +41,15 @@ void Core::set_process(PCB* process) {
   this->quantumStartTime=chrono::system_clock::now();
 }
 
-RegisterBank Core::get_registerBank(){ return this->register_bank; }
+vector<int> Core::get_registerBank(){ 
+  vector<int> registers;
+  for (auto &&i : this->register_bank.get_registers())
+  {
+    registers.push_back(i.value);
+  }
+  registers.push_back(this->PC);
+  return registers; 
+}
 
 void Core::set_registerBank(vector<int> registers) {
   this->register_bank.set_registers(registers);
@@ -49,7 +62,7 @@ bool Core::InstructionFetch() {
 
   active_instruction = codigo[PC];
 
-  cout << active_instruction << endl;
+  Checkpoint("Instrução: "+active_instruction);
 
   PC++;
 
@@ -155,6 +168,7 @@ void Core::MemoryAccess() {
 
       case STORE: {
         cache.write(get_register(2), get_register(get_register(1)),quantumLeft); // escreve na cache e na ram
+        process->add_memory(get_register(2)); // caso funcione adiciona posicao de memoria no processo pra dar unblock
         break;
       }
     }
@@ -163,7 +177,7 @@ void Core::MemoryAccess() {
   {
     // Caso recurso não seja usado volta uma instrução e retorna
     PC-=1;
-    cout << "ENDEREÇO DE RAM SENDO USADO POR OUTRO PROCESSO" << endl;
+    Error("ENDEREÇO DE RAM SENDO USADO POR OUTRO PROCESSO");
     throw GetDuration(this->quantumStartTime);
   }
 }
@@ -178,13 +192,8 @@ void Core::WriteBack() {
 int Core::CheckQuantum(){
   auto quantumDuration = GetDuration(this->quantumStartTime);
   if(quantumDuration>this->process->get_quantum()){
-    cout << "QUANTUM ATINGIDO" << endl;
+    Error("QUANTUM ATINGIDO");
     throw(quantumDuration);
   }
   return this->process->get_quantum()-quantumDuration;
-}
-
-int GetDuration(chrono::_V2::system_clock::time_point baseTime){
-  auto now = chrono::system_clock::now();
-  return chrono::duration_cast<chrono::milliseconds>(now - baseTime).count();
 }

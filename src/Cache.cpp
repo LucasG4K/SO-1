@@ -20,8 +20,7 @@ void Cache::writeInCache(int address, int data){
 
   if (cacheData.count(cacheAddress)) {
     if (cacheData[cacheAddress].second) {
-      
-      cout << "ENDEREÇO CACHE OCUPADO: ALOCANDO PARA RAM" << endl;
+      Error("ENDEREÇO CACHE OCUPADO: ALOCANDO PARA RAM");
 
       int qsize = fifoQueue.size();
       int counter = 0;
