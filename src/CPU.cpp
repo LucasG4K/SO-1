@@ -1,4 +1,5 @@
 #include "CPU.hpp"
+#include <unistd.h>
 
 CPU::CPU(){
   for (auto &&i : this->cores)
@@ -6,7 +7,8 @@ CPU::CPU(){
 }
 
 void CPU::ProcessCore(PCB* process){
-  Checkpoint("Rodando Processo");
+  Checkpoint("Testando Processo "+process->get_name() +" "+process->get_state());
+  string initState=process->get_state();
   // Verifica status do processo, se tiver executando por outra thread retorna
   if(process->get_state()=="executing") return;
   else if (process->get_state()=="blocked"){
@@ -17,18 +19,32 @@ void CPU::ProcessCore(PCB* process){
     if(process->get_state()=="executing") return;
     process->start_process();
   }
+  else return;
 
-  // Seleciona core e ramstorage
+  // Seleciona core 
   Core selectedCore;
-  if(!SelectRamStorage(process)) return;
-  if(!SelectCore(&selectedCore)) return;
+  if(!SelectCore(&selectedCore)){
+    process->return_state(initState);
+    return;
+  };
+  Checkpoint("rodando "+process->get_name());
+  sleep(10);
 
-  // Carrega registradores da ram 
-  if(process->get_state()=="blocked"){
+  // Carrega registradores da ram ou seleciona ramstorage
+  if(initState=="blocked"){
     Checkpoint("Registradores carregando");
     LoadRegisterFromPCB(&selectedCore, process);
     Success("Registradores carregados, processo desbloqueado");
   }
+  else{
+    if(!SelectRamStorage(process)){
+      process->return_state(initState);
+      return;
+    };
+  }
+  process->finish_process();
+  auto lock = selectedCore.get_lock();
+  pthread_mutex_unlock(lock);
   
   // Pipeline
   try
@@ -47,7 +63,7 @@ void CPU::ProcessCore(PCB* process){
     this->Process_RAM[process->get_ram()]=false;
     process->finish_process();
     auto lock = selectedCore.get_lock();
-    pthread_mutex_unlock(&lock);
+    pthread_mutex_unlock(lock);
   }
   // Caso quantum seja atingido (ao buscar recurso ou por demorar mesmo)
   catch(int quantum){
@@ -60,8 +76,9 @@ void CPU::ProcessCore(PCB* process){
     this->ram.FreeMemory(process->get_memoryUsage());
     // Libera Core
     auto lock = selectedCore.get_lock();
-    pthread_mutex_unlock(&lock);
+    pthread_mutex_unlock(lock);
   }  
+
 }
 
 // Escolhe um core pro processo, se todos estiverem cheios, retorna
@@ -70,8 +87,10 @@ bool CPU::SelectCore(Core* core){
   for (int i = 0; i < MultiCore; i++)
   {
     // Ve se o core esta sendo usado, e já trava ele se estiver
-    auto lock =cores->get_lock();
-    if (pthread_mutex_trylock(&lock)==0){
+    Checkpoint("Checando Core "+to_string(i));
+    auto lock =cores[i].get_lock();
+    if (pthread_mutex_trylock(lock)==0){
+      Checkpoint("Core selecionado "+to_string(i));
       (*core)=this->cores[i];
       foundCore=true;
       return true;
@@ -87,6 +106,8 @@ bool CPU::SelectCore(Core* core){
 
 // Escolhe um pedaço de ram pra guardar o processo caso seja a primeira vez executando, se todos estiverem cheios, retorna
 bool CPU::SelectRamStorage(PCB* process){
+  if (process->get_ram()==-1) return true;
+  
   if (process->get_state()!="blocked"){
     // Busca ram vazia
     for (int i = 0; i < NumRamStorage; i++)

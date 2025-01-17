@@ -6,7 +6,8 @@ int GetDuration(chrono::_V2::system_clock::time_point baseTime){
 }
 
 Core::Core(){}
-Core::Core(RAM* ram){
+Core::Core(RAM* ram) : lock(new pthread_mutex_t){
+  pthread_mutex_init(lock, NULL);
   this->cache=Cache(ram);  
 }
 
@@ -26,7 +27,7 @@ int Core::ula(int op1, int op2, char oper) {
   return 0;
 }
 
-pthread_mutex_t Core::get_lock(){return this->lock;}
+pthread_mutex_t* Core::get_lock(){return this->lock;}
 
 int Core::get_register(int address) { return register_bank.get_value(address); }
 int Core::get_PC() { return this->PC; }
@@ -37,7 +38,6 @@ void Core::set_register(int address, int value) {
 
 void Core::set_process(PCB* process) {
   this->process=process;
-  this->process->unblock_process();
   this->quantumStartTime=chrono::system_clock::now();
 }
 

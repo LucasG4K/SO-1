@@ -1,0 +1,25 @@
+Sucesso thread 140737331410496: Thread separada
+Checkpoint thread 140737331410496: Saiu
+Checkpoint thread 140737331410496: Testando Processo Codigo1 ready
+Checkpoint thread 140737331410496: Checando Core
+Checkpoint thread 140737331410496: Checando Core
+Error thread 140737331410496: Nenhum core disponível
+Checkpoint thread 140737331410496: Saiu
+Checkpoint thread 140737331410496: Testando Processo Codigo3 executing
+Checkpoint thread 140737331410496: Saiu
+Checkpoint thread 140737331410496: Testando Processo Codigo2 executing
+Checkpoint thread 140737331410496: Saiu
+Checkpoint thread 140737331410496: Testando Processo Codigo1 ready
+Checkpoint thread 140737331410496: Checando Core
+Checkpoint thread 140737331410496: Checando Core
+Error thread 140737331410496: Nenhum core disponível
+Checkpoint thread 140737331410496: Saiu
+Checkpoint thread 140737331410496: Testando Processo Codigo3 executing
+Checkpoint thread 140737331410496: Saiu
+Checkpoint thread 140737331410496: Testando Processo Codigo2 finished
+Checkpoint thread 140737331410496: Saiu
+Checkpoint thread 140737331410496: Testando Processo Codigo1 ready
+Checkpoint thread 140737331410496: Checando Core
+Checkpoint thread 140737331410496: core selecionado 0
+Checkpoint thread 140737331410496: rodando Codigo1
+Checkpoint thread 140737331410496: Começando Pipeline

@@ -9,7 +9,7 @@ using namespace std;
 
 class RAM {
   private:
-    pair<int,pthread_mutex_t> ram[RamSize];
+    pair<int,pthread_mutex_t*> ram[RamSize];
     vector<PCB*> filaProcessos;
 
   public:

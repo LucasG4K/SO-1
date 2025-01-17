@@ -34,6 +34,7 @@ class PCB {
     int get_id();
     int get_quantum();
     string get_state();
+    string get_name();
 
     // Espaço da RAM para ser guardado quando bloqueia
     void set_ram(int ramStorage);
@@ -41,6 +42,7 @@ class PCB {
 
     // Mudar estado do processo
     void block_process(int time);
+    void return_state(string state);
     void unblock_process();
     void start_process();
     void finish_process();

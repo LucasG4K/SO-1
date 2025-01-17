@@ -32,7 +32,7 @@ class Core {
   int op;
 
   // Usado para garatir o core pra cada thread
-  pthread_mutex_t lock;
+  pthread_mutex_t* lock;
 
   // Metódos usados internamente
   int get_register(int address);
@@ -51,7 +51,7 @@ class Core {
   void WriteBack();
   int CheckQuantum();
 
-  pthread_mutex_t get_lock();
+  pthread_mutex_t* get_lock();
   vector<int> get_registerBank();
   void set_registerBank(vector<int> registers);
   int get_PC();

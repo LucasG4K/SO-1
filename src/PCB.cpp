@@ -1,16 +1,16 @@
 #include "PCB.hpp"
 
 PCB::PCB(string nameFile){
-  ifstream codigo("./dataset/"+nameFile+".txt");
+  ifstream codigo("./../dataset/"+nameFile);
   string temp;
   getline(codigo, temp);
-  this->name = temp.substr(temp.find(" - "),temp.size());
+  this->name = temp.substr(temp.find(" - ")+3,temp.size());
 
   getline(codigo, temp);
-  this->id = stoi(temp.substr(temp.find(" - "),temp.size()));
+  this->id = stoi(temp.substr(temp.find(" - ")+3,temp.size()));
 
   getline(codigo, temp);
-  this->ramSpace = stoi(temp.substr(temp.find(" - "),temp.size()));
+  this->ramSpace = stoi(temp.substr(temp.find(" - ")+3,temp.size()));
 
   while (getline(codigo, temp)) {
     this->instructions.push_back(temp);
@@ -25,6 +25,7 @@ vector<string> PCB::get_instruction() {return this->instructions;}
 int PCB::get_id() {return this->id;}
 int PCB::get_quantum() {return this->quantum;}
 string PCB::get_state() {return this->state;}
+string PCB::get_name() {return this->name;}
 
 void PCB::set_ram(int ramStorage){this->ramSpace=ramStorage;};
 int PCB::get_ram() {return this->ramSpace;}
@@ -38,6 +39,10 @@ vector<int> PCB::get_memoryUsage() {return this->memoryUsage;}
 void PCB::block_process(int time){
     this->timeSpent+=time;
     this->state="blocked";
+}
+
+void PCB::return_state(string state){
+    this->state=state;
 }
 
 void PCB::unblock_process(){
