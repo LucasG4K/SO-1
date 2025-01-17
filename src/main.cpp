@@ -1,4 +1,6 @@
 #include "CPU.hpp"
+#include <limits>
+#include <algorithm>
 #include <unistd.h>
 
 PCB* initProcess = nullptr;
@@ -23,7 +25,14 @@ void* callCore(void* arguments){
 
 int main() {
   pthread_t threads[filaProcessos.size()];
+  int escalonador;
   int indexThread=0;
+
+  cout<<"Escolha um escalonador de processo:"<<endl;
+  cout<<"0-RoundRobin"<<endl;
+  cout<<"1-First Come"<<endl;
+  cout<<"2-Short First"<<endl;
+  cin>>escalonador;
 
   // Cria thread dos cores
   for (int i = 0; i < MultiCore+1; i++)
@@ -33,10 +42,37 @@ int main() {
     indexThread++;
   }
 
+  for (auto &&i : filaProcessos)
+  {
+   switch (escalonador)
+   {
+   case 0: //seta o quantum de cada um
+    i->set_quantum(250);
+    break;
+   case 1: //round robin com qunatum infinito
+    i->set_quantum(std::numeric_limits<int>::max());
+    break;
+   case 2: //seta tempo aleatorio para processos
+    unsigned long j;
+    srand( (unsigned)time(NULL) );
+    int n;
+    n = rand();
+    i->set_et(n);
+    i->set_quantum(std::numeric_limits<int>::max());
+    break;
+   default:
+    break;
+   }
+  }
+  if(escalonador==2){
+    std::sort(filaProcessos.begin(), filaProcessos.end(),
+          [](PCB* const & a, PCB* const & b) -> bool
+          { return a->get_et() < b->get_et(); } );
+  }
+
   // Monitora a lista de processos
   while (!filaProcessos.empty())
-  {    
-    if (changeInitProcess)
+  {    if (changeInitProcess)
     {
       // Mantem o processo para executar por 5 segundos
       initProcess = filaProcessos.front(); 

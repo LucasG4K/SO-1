@@ -23,7 +23,10 @@ PCB::PCB(string nameFile){
 
 vector<string> PCB::get_instruction() {return this->instructions;}
 int PCB::get_id() {return this->id;}
+int PCB::get_et() {return this->estimatedTime;}
+void PCB::set_et(int et){this->estimatedTime=et;};
 int PCB::get_quantum() {return this->quantum;}
+void PCB::set_quantum(int quantum){this->quantum=quantum;};
 string PCB::get_state() {return this->state;}
 string PCB::get_name() {return this->name;}
 

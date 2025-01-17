@@ -36,15 +36,6 @@ void CPU::ProcessCore(PCB* process){
     LoadRegisterFromPCB(&selectedCore, process);
     Success("Registradores carregados, processo desbloqueado");
   }
-  else{
-    if(!SelectRamStorage(process)){
-      process->return_state(initState);
-      return;
-    };
-  }
-  process->finish_process();
-  auto lock = selectedCore.get_lock();
-  pthread_mutex_unlock(lock);
   
   // Pipeline
   try

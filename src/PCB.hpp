@@ -19,6 +19,7 @@ class PCB {
     string state;
     int quantum;
     int ramSpace;
+    int estimatedTime;
 
     // Registradores e memorias usadas
     vector<int> registers;
@@ -33,6 +34,9 @@ class PCB {
     vector<string> get_instruction();
     int get_id();
     int get_quantum();
+    void set_quantum(int quantum);
+    int get_et();
+    void set_et(int et);
     string get_state();
     string get_name();
 
