@@ -33,7 +33,7 @@ vector<string> split(const string &str) {
 
 vector<PCB*> getFilaProcessos(){
   vector<PCB*> filaProcessos;
-  string folderPath = "./../dataset"; 
+  string folderPath = "dataset"; 
   try {
     for (const auto& entry : filesystem::directory_iterator(folderPath)) {
       if (entry.is_regular_file()) {

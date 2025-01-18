@@ -76,6 +76,8 @@
     <h2>⚙️Como executar </h2>
     <p>
         O projeto possui um arquivo Makefile que realiza todo o procedimento de compilação e execução. Para tanto, temos as seguintes diretrizes de execução para distribuições Linux:
+    <p> 
+        <strong>Observação:</strong> Para assegurar a leitura correta dos arquivos de processos, é fundamental verificar se o caminho para a pasta <code>"dataset"</code> está configurado corretamente nos arquivos <code>PCB.cpp</code> e <code>SO.cpp</code>. Durante o desenvolvimento, foram identificadas inconsistências no funcionamento em diferentes máquinas. </p>
     </p>
     <div align="center">
         <table>
@@ -104,6 +106,7 @@
             <b>Tabela 1:</b> Comandos úteis para compilar e executar o programa de computador
         </p>
     </div>
+
 </section>
 
 <section>

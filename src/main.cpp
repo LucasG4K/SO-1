@@ -34,6 +34,8 @@ int main() {
   cout<<"2-Short First"<<endl;
   cin>>escalonador;
 
+  auto start = std::chrono::system_clock::now();
+
   // Cria thread dos cores
   for (int i = 0; i < MultiCore+1; i++)
   {
@@ -93,4 +95,10 @@ int main() {
     }
   }
   cout << "Processos Finalizados" << '\n';
+
+  auto end = std::chrono::system_clock::now();
+  auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+  std::cout << "Tempo de execução: " << duration << " ms" << std::endl;
+
+  return 0;
 }

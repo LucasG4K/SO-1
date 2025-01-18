@@ -1,7 +1,7 @@
 #include "PCB.hpp"
 
 PCB::PCB(string nameFile){
-  ifstream codigo("./../dataset/"+nameFile);
+  ifstream codigo("dataset/"+nameFile);
   string temp;
   getline(codigo, temp);
   this->name = temp.substr(temp.find(" - ")+3,temp.size());
