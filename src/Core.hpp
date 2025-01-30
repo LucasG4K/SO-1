@@ -19,8 +19,10 @@ class Core {
   // Usado no writeback
   bool write_data;
   int write_value;
+  uint32_t active_LSH;
 
   Cache cache;
+  RAM *ram;
   RegisterBank register_bank;
 
   // Processo associado
@@ -30,6 +32,7 @@ class Core {
   // Usados entre fases de pipeline para simular os impulsos da MIPS
   string active_instruction;
   int op;
+  int ula_counter;
 
   // Usado para garatir o core pra cada thread
   pthread_mutex_t* lock;
@@ -38,6 +41,7 @@ class Core {
   int get_register(int address);
   void set_register(int address, int value);
   int ula(int op1, int op2, char oper);
+  uint32_t generateLSH(int op, int reg1, int reg2);
 
  public:
   Core();
@@ -50,6 +54,7 @@ class Core {
   void MemoryAccess();
   void WriteBack();
   int CheckQuantum();
+  int getUlaCounter();
 
   pthread_mutex_t* get_lock();
   vector<int> get_registerBank();

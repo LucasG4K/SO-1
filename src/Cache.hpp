@@ -10,13 +10,14 @@ using namespace std;
 class Cache {
  private:
   RAM* ram;
-  unordered_map<int, pair<int, bool>> cacheData; // address, {value, dirty}
+  unordered_map<int, int> cacheData; // address, value
   queue<int> fifoQueue;
-  void writeInCache(int address, int data);
+  
  public:
   Cache();
   Cache(RAM* ram);
-  bool read(int address);
+  void writeInCache(int address, int data);
+  bool read(int address, int &data);
   void write(int address, int data, int quantumLeft);
   void printCache();
 };

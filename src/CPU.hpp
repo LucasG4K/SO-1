@@ -11,11 +11,12 @@ class CPU {
     Core cores[MultiCore];
     bool Process_RAM[32] = { false };
 
-    bool SelectCore(Core* core);
+    bool SelectCore(int* core);
 
     bool SelectRamStorage(PCB* process);
   public:
     CPU();
+    int ULAs_counter();
     void ProcessCore(PCB* process);
     void StoreRegisterToPCB(Core* selectedCore, PCB* process);
     void LoadRegisterFromPCB(Core* selectedCore, PCB* process);
