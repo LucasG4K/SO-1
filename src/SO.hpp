@@ -6,6 +6,7 @@
 #define NumRamStorage 32
 #define RegisterBankSize 32
 #define CACHE_SIZE 64
+#define UseCache false
 
 #include <string>
 #include <queue>
@@ -18,7 +19,7 @@ void writeRamToFile(string& instruction, pair<int,pthread_mutex_t*>* ram);
 vector<string> split(const string& str);
 vector<PCB*> getFilaProcessos();
 void Success(string print);
-void Checkpoint(string print);
-void Error(string print);
+void checkpoint(string print);
+void error(string print);
 
 #endif

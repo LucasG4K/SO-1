@@ -33,6 +33,7 @@ class Core {
   string active_instruction;
   int op;
   int ula_counter;
+  int pipeline_counter;
 
   // Usado para garatir o core pra cada thread
   pthread_mutex_t* lock;
@@ -55,11 +56,13 @@ class Core {
   void WriteBack();
   int CheckQuantum();
   int getUlaCounter();
+  int getPipelineCounter();
 
   pthread_mutex_t* get_lock();
   vector<int> get_registerBank();
   void set_registerBank(vector<int> registers);
   int get_PC();
+  void set_PC(int PC);
 };
 
 #endif

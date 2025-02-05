@@ -11,6 +11,7 @@ Core::Core(RAM* ram) : lock(new pthread_mutex_t) {
   this->ram = ram;
   this->cache = Cache();
   this->ula_counter=0;
+  this->pipeline_counter=0;
   this->active_LSH=0;
 }
 
@@ -21,7 +22,7 @@ map<string, InstructionType> instruction_map = {
 int Core::ula(int op1, int op2, char oper) {
   ula_counter++;
 
-  Checkpoint("ULA = " + to_string(op1) + " : " + to_string(op2) + " : " + to_string(oper));
+  // checkpoint("ULA = " + to_string(op1) + " : " + to_string(op2) + " : " + to_string(oper));
 
   if (oper == '+')
     return op1 + op2;
@@ -36,14 +37,17 @@ int Core::ula(int op1, int op2, char oper) {
 
 pthread_mutex_t* Core::get_lock() { return this->lock; }
 int Core::getUlaCounter() { return this->ula_counter; }
+int Core::getPipelineCounter() { return this->pipeline_counter; }
 int Core::get_register(int address) { return register_bank.get_value(address); }
 int Core::get_PC() { return this->PC; }
+void Core::set_PC(int PC) { this->PC=PC; }
 
 void Core::set_register(int address, int value) {
   register_bank.set_value(address, value);
 }
 
 void Core::set_process(PCB* process) {
+  // checkpoint("aaaaaaaaaa");
   this->process = process;
   this->quantumStartTime = chrono::system_clock::now();
 }
@@ -68,10 +72,10 @@ bool Core::InstructionFetch() {
 
   active_instruction = codigo[PC];
 
-  Checkpoint("Instrução: " + active_instruction);
+  // checkpoint("Instrução: " + active_instruction);
 
   PC++;
-
+  pipeline_counter++;
   return true;
 }
 
@@ -102,15 +106,16 @@ void Core::InstructionDecode() {
 
   // Gera o LSH com base na instrução decodificada
   active_LSH = generateLSH(op, get_register(reg2), get_register(reg3));
+  pipeline_counter++;
 }
 
 
 void Core::Execute() {
   int data;
-  if (cache.read(active_LSH, data)) { // Cache hit
+  if (UseCache && cache.read(active_LSH, data)) { // Cache hit
     write_value = data;
     write_data = true;
-    cache.printCache();
+    //cache.printCache();
     return;
   }
 
@@ -152,6 +157,7 @@ void Core::Execute() {
   }
 
   write_data = true;
+  pipeline_counter++;
 }
 
 
@@ -180,10 +186,11 @@ void Core::MemoryAccess() {
         break;
       }
     }
+    pipeline_counter++;
   } catch (const exception& e) {
     // Caso recurso não seja usado volta uma instrução e retorna
     PC -= 1;
-    Error("ENDEREÇO DE RAM SENDO USADO POR OUTRO PROCESSO");
+    // error("ENDEREÇO DE RAM SENDO USADO POR OUTRO PROCESSO");
     throw GetDuration(this->quantumStartTime);
   }
 }
@@ -197,8 +204,8 @@ void Core::WriteBack() {
 
 int Core::CheckQuantum() {
   auto quantumDuration = GetDuration(this->quantumStartTime);
-  if (quantumDuration > this->process->get_quantum()) {
-    Error("QUANTUM ATINGIDO");
+  if (this->process->get_quantum()<=10 && quantumDuration > this->process->get_quantum()) {
+    // error("QUANTUM ATINGIDO");
     throw(quantumDuration);
   }
   return this->process->get_quantum() - quantumDuration;

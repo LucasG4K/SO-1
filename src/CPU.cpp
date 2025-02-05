@@ -7,7 +7,7 @@ CPU::CPU(){
 }
 
 void CPU::ProcessCore(PCB* process) {
-  Checkpoint("Testando Processo "+process->get_name() +" "+process->get_state());
+  // checkpoint("Testando Processo "+process->get_name() +" "+process->get_state());
   string initState=process->get_state();
   // Verifica status do processo, se tiver executando por outra thread retorna
   if(process->get_state()=="executing") return;
@@ -29,20 +29,19 @@ void CPU::ProcessCore(PCB* process) {
     return;
   };
   selectedCore=cores[selectedCoreIndex];
-  Checkpoint("rodando "+process->get_name());
-  sleep(10);
+  // checkpoint("rodando "+process->get_name());
 
   // Carrega registradores da ram ou seleciona ramstorage
   if(initState=="blocked") {
-    Checkpoint("Registradores carregando");
+    // checkpoint("Registradores carregando");
     LoadRegisterFromPCB(&cores[selectedCoreIndex], process);
-    Success("Registradores carregados, processo desbloqueado");
+    // Success("Registradores carregados, processo desbloqueado");
   }
   
   // Pipeline
   try {
-    Checkpoint("Começando Pipeline");
     cores[selectedCoreIndex].set_process(process);
+    // checkpoint("Começando Pipeline "+process->get_name() +" "+process->get_state());
     while (cores[selectedCoreIndex].InstructionFetch()) {
       cores[selectedCoreIndex].InstructionDecode();
       cores[selectedCoreIndex].Execute();
@@ -52,6 +51,7 @@ void CPU::ProcessCore(PCB* process) {
     }
     
     // Finalizar processo
+    cores[selectedCoreIndex].set_PC(0);
     this->Process_RAM[process->get_ram()]=false;
     process->finish_process();
     auto lock = cores[selectedCoreIndex].get_lock();
@@ -59,7 +59,7 @@ void CPU::ProcessCore(PCB* process) {
   }
   // Caso quantum seja atingido (ao buscar recurso ou por demorar mesmo)
   catch(int quantum) {
-    Error("Processo bloqueado");
+    // error("Processo bloqueado");
     // Bloqueia o processo
     process->block_process(quantum);
     // Guarda banco de registradores no storage RAM selecionada
@@ -77,17 +77,17 @@ bool CPU::SelectCore(int* core) {
   bool foundCore=false;
   for (int i = 0; i < MultiCore; i++) {
     // Ve se o core esta sendo usado, e já trava ele se estiver
-    Checkpoint("Checando Core "+to_string(i));
+    // checkpoint("Checando Core "+to_string(i));
     auto lock =cores[i].get_lock();
     if (pthread_mutex_trylock(lock)==0){
-      Checkpoint("Core selecionado "+to_string(i));
+      // checkpoint("Core selecionado "+to_string(i));
       (*core)=i;
       foundCore=true;
       return true;
     }
   }
   if (!foundCore) {
-    Error("Nenhum core disponível");
+    // error("Nenhum core disponível");
     return false;
   }
   return false;
@@ -106,7 +106,7 @@ bool CPU::SelectRamStorage(PCB* process) {
         return true;
       }
     }
-    Error("Nenhuma ram disponível");
+    // error("Nenhuma ram disponível");
     return false;
   }
   return true;
@@ -126,5 +126,12 @@ int CPU::ULAs_counter() {
   int sum=0;
   for (auto &i : cores)
     sum+=i.getUlaCounter();
+  return sum;
+}
+
+int CPU::Pipeline_counter() {
+  int sum=0;
+  for (auto &i : cores)
+    sum+=i.getPipelineCounter();
   return sum;
 }

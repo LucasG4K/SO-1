@@ -32,9 +32,7 @@ void RegisterBank::set_registers(vector<int> registers) {
 }
 
 void RegisterBank::print() {
-
   for (int i = 0; i < this->registers.size(); i++) {
     cout << "0x" << i << " " << this->get_value(i) << '\n';
   }
-
 }

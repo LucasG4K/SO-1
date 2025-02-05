@@ -24,16 +24,20 @@ int RAM::Read(int address) {
 void RAM::Write_Update(int address, int value, int quantumLeft) {
   if (!(address < 0 || address >= RamSize)) {
     struct timespec timeoutTime;
-    timeoutTime.tv_sec = quantumLeft;    
-    int checkLock = pthread_mutex_timedlock(this->ram[address].second,&timeoutTime);
+    timeoutTime.tv_sec = quantumLeft;
+    int checkLock;
+    if (quantumLeft>10)
+      checkLock = pthread_mutex_lock(this->ram[address].second);
+    else
+      checkLock = pthread_mutex_timedlock(this->ram[address].second,&timeoutTime);
     if (checkLock == 0) {
       this->ram[address].first = value;
-      Checkpoint("Deu lock em "+to_string(address));
+      // checkpoint("Deu lock em "+to_string(address));
     } else if (checkLock == ETIMEDOUT) {
-      Error("Deu timeout em "+to_string(address));
+      // error("Deu timeout em "+to_string(address));
       throw exception();
     } else {
-      Error("Deu erro em "+to_string(address));
+      // error("Deu erro em "+to_string(address));
       throw exception();
     }
   }
@@ -58,9 +62,9 @@ void RAM::FreeMemory(vector<int> addresses){
   {
     auto retorno=pthread_mutex_unlock(this->ram[i].second);
     if(retorno==1)
-      Error("Thread não contem o recurso "+i);
+      // error("Thread não contem o recurso "+i);
     while(retorno==0){
-      Checkpoint("Deu unlock em "+to_string(i));
+      // checkpoint("Deu unlock em "+to_string(i));
       retorno=pthread_mutex_unlock(this->ram[i].second);
     }
   }

@@ -62,11 +62,11 @@ void Success(string print){
   checkFile("Sucesso",to_string(pthread_self()),print);
   cout<<"Sucesso thread "<<pthread_self()<<": "<<print<<'\n';
 }
-void Checkpoint(string print){
-  checkFile("Checkpoint",to_string(pthread_self()),print);
-  cout<<"Checkpoint thread "<<pthread_self()<<": "<<print<<'\n';
+void checkpoint(string print){
+  checkFile("checkpoint",to_string(pthread_self()),print);
+  cout<<"checkpoint thread "<<pthread_self()<<": "<<print<<'\n';
 }
-void Error(string print){
-  checkFile("Error",to_string(pthread_self()),print);
+void error(string print){
+  checkFile("error",to_string(pthread_self()),print);
   cout<<"Erro thread "<<pthread_self()<<": "<<print<<'\n';
 }

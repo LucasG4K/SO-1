@@ -10,15 +10,14 @@ CPU cpu;
 
 void* callCore(void* arguments){
   // Como não se usa join, damos detach na thread para que quando ela acabar os recursos sejam
-  pthread_detach(pthread_self()) == 0?Success("Thread separada"):Error("Erro ao separar thread"); 
+  pthread_detach(pthread_self()); // == 0?Success("Thread separada"):error("Erro ao separar thread"); 
   while (!filaProcessos.empty())
   {
     if(initProcess!=nullptr) {
       changeInitProcess=true;
       cpu.ProcessCore(initProcess);
     }
-    Checkpoint("Saiu");
-    sleep(2);
+    usleep(50);
   }
   return nullptr;
 }
@@ -28,28 +27,24 @@ int main() {
   int escalonador;
   int indexThread=0;
 
-  cout<<"Escolha um escalonador de processo:"<<endl;
-  cout<<"0-RoundRobin"<<endl;
-  cout<<"1-First Come"<<endl;
-  cout<<"2-Short First"<<endl;
-  cin>>escalonador;
+  escalonador=0;
 
-  auto start = std::chrono::system_clock::now();
+  auto start = chrono::high_resolution_clock::now();
 
   // Cria thread dos cores
-  for (int i = 0; i < MultiCore+1; i++) {
+  for (int i = 0; i < MultiCore; i++) {
     auto rc = pthread_create(&threads[indexThread], NULL, callCore, NULL);
-    rc==0?Success("Thread criada com sucesso"):Error("Erro "+to_string(rc)+" ao criar a thread");
+    //rc==0?Success("Thread criada com sucesso"): error("Erro "+to_string(rc)+" ao criar a thread");
     indexThread++;
   }
 
   for (auto &&i : filaProcessos) {
     switch (escalonador) {
       case 0: //seta o quantum de cada um
-        i->set_quantum(250);
+        i->set_quantum(5);
         break;
       case 1: //round robin com qunatum infinito
-        i->set_quantum(std::numeric_limits<int>::max());
+        i->set_quantum(numeric_limits<int>::max());
         break;
       case 2: //seta tempo aleatorio para processos
         unsigned long j;
@@ -57,14 +52,14 @@ int main() {
         int n;
         n = rand();
         i->set_et(n);
-        i->set_quantum(std::numeric_limits<int>::max());
+        i->set_quantum(numeric_limits<int>::max());
         break;
       default:
         break;
     }
   }
   if(escalonador==2) {
-    std::sort(filaProcessos.begin(), filaProcessos.end(),
+    sort(filaProcessos.begin(), filaProcessos.end(),
           [](PCB* const & a, PCB* const & b) -> bool
           { return a->get_et() < b->get_et(); } );
   }
@@ -72,9 +67,8 @@ int main() {
   // Monitora a lista de processos
   while (!filaProcessos.empty()) {
     if (changeInitProcess) {
-      // Mantem o processo para executar por 5 segundos
       initProcess = filaProcessos.front(); 
-      sleep(0.05);
+      usleep(100);
 
       // Tira da frente, e coloca no final,
       filaProcessos.erase(filaProcessos.begin());
@@ -89,10 +83,45 @@ int main() {
       };
     }
   }
-  cout << "Processos Finalizados" << '\n';
-  cout << "ULA: " << cpu.ULAs_counter() << endl;
-  auto end = std::chrono::system_clock::now();
-  auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-  std::cout << "Tempo de execução: " << duration << " ms" << std::endl;
+
+  std::string filename = "output/output" + std::to_string(escalonador) + std::to_string(MultiCore) + std::to_string(UseCache) + ".csv";
+
+  // Check if the file exists
+  std::ifstream fileCheck(filename);
+  bool fileExists = fileCheck.good();
+  fileCheck.close();
+
+  // Open file in append mode
+  std::ofstream outFile(filename, std::ios::out | std::ios::app);
+  if (!outFile) {
+      throw std::ios_base::failure("Failed to create the file");
+  }
+
+  // If the file didn't exist, write the header first
+  if (!fileExists) {
+      outFile << "Escalonador;QtdCores;UsaCache;QtdUla;QtdPipeline;Duração (us)\n";
+  }
+  switch (escalonador)
+  {
+  case 0:
+    outFile<<"RoundRobin;";
+    break;
+  case 1:
+    outFile<<"First Come;";
+    break;
+  case 2:
+    outFile<<"Short First;";
+    break;
+  default:
+    break;
+  }
+  outFile << MultiCore<<";";
+  outFile << UseCache<<";";
+  outFile << cpu.ULAs_counter()<<";";
+  outFile << cpu.Pipeline_counter()<<";";
+  auto end = chrono::high_resolution_clock::now();
+  auto duration = chrono::duration_cast<chrono::microseconds>(end - start).count();
+  outFile << duration<<";"<<endl;
+  outFile.close();
   return 0;
 }

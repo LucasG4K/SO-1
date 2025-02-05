@@ -17,6 +17,7 @@ class CPU {
   public:
     CPU();
     int ULAs_counter();
+    int Pipeline_counter();
     void ProcessCore(PCB* process);
     void StoreRegisterToPCB(Core* selectedCore, PCB* process);
     void LoadRegisterFromPCB(Core* selectedCore, PCB* process);
