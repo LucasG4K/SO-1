@@ -1,0 +1,77 @@
+import os
+import csv
+import collections
+import matplotlib.pyplot as plt
+import numpy as np
+from collections import defaultdict
+
+def process_files_in_folder(folder_path):
+    data = collections.defaultdict(list)
+    
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".csv"):  # Ensure we only process CSV files
+            file_path = os.path.join(folder_path, filename)
+            
+            with open(file_path, newline='', encoding='utf-8') as csvfile:
+                reader = csv.reader(csvfile, delimiter=';')
+                headers = next(reader)  # Skip the header
+                
+                for row in reader:
+                    if len(row) < 6:
+                        continue  # Skip invalid rows
+                    
+                    key = tuple(row[:3])  # First three columns as key
+                    try:
+                        values = list(map(float, row[3:-1]))  # Convert all but the last column to float
+                        data[key].append(values)
+                    except ValueError:
+                        continue  # Skip rows with conversion errors
+    
+    # Calculate averages
+    results = {}
+    for key, values in data.items():
+        avg_values = [sum(col) / len(col) for col in zip(*values)]
+        results[key] = avg_values
+    
+    return results
+
+folder_path = "SemSimilaridade"
+data = process_files_in_folder(folder_path)
+
+print("\nAverage values per configuration:")
+for key, avg_values in data.items():
+    print(f"{key}: {avg_values}")
+
+# Group durations by scheduler and configurations
+duration_by_scheduler = defaultdict(lambda: defaultdict(float))
+for (scheduler, multicore, cache), values in data.items():
+    duration_by_scheduler[scheduler][(multicore, cache)] = values[2]
+
+# Extract labels and values
+schedulers = list(duration_by_scheduler.keys())
+configurations = [('1', '0'), ('1', '1'), ('2', '0'), ('2', '1')]
+duration_matrix = []
+
+for scheduler in schedulers:
+    duration_matrix.append([duration_by_scheduler[scheduler].get(config, 0) for config in configurations])
+
+duration_matrix = np.array(duration_matrix)
+
+# Plot bar chart
+fig, ax = plt.subplots(figsize=(10, 6))
+x = np.arange(len(schedulers))
+width = 0.2  # Width of each bar
+
+for i, config in enumerate(configurations):
+    ax.bar(x + i * width - (width * 1.5), duration_matrix[:, i], width, label=f'MC {config[0]}, Cache {config[1]}')
+
+# Labels and formatting
+ax.set_xlabel('Scheduler')
+ax.set_ylabel('Duration (us)')
+ax.set_title('Execution Duration by Scheduler and Configuration')
+ax.set_xticks(x)
+ax.set_xticklabels(schedulers, rotation=45, ha='right')
+ax.legend()
+
+plt.tight_layout()
+plt.savefig("figs/times"+folder_path+".png")
