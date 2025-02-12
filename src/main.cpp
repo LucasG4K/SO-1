@@ -5,13 +5,14 @@
 
 PCB* initProcess = nullptr;
 bool changeInitProcess=true;
-vector<PCB*> filaProcessos = getFilaProcessos();
+vector<int> tlb;
+vector<PCB*> filaProcessos = getFilaProcessos(&tlb);
 CPU cpu;
 
 void* callCore(void* arguments){
   // Como não se usa join, damos detach na thread para que quando ela acabar os recursos sejam
   pthread_detach(pthread_self()); // == 0?Success("Thread separada"):error("Erro ao separar thread"); 
-  while (!filaProcessos.empty())
+  while (!tlb.empty())
   {
     if(initProcess!=nullptr) {
       changeInitProcess=true;
@@ -65,21 +66,22 @@ int main() {
   }
 
   // Monitora a lista de processos
-  while (!filaProcessos.empty()) {
+  while (!tlb.empty()) {
     if (changeInitProcess) {
-      initProcess = filaProcessos.front(); 
+      int initProcessIndex=tlb.front();
+      initProcess = filaProcessos[initProcessIndex]; 
       usleep(100);
 
       // Tira da frente, e coloca no final,
-      filaProcessos.erase(filaProcessos.begin());
-      filaProcessos.push_back(initProcess);
+      tlb.erase(tlb.begin());
+      tlb.push_back(initProcessIndex);
       changeInitProcess=false;
     }
     
     // Checa quantidade de processos finalizados
-    for (int i = 0; i < filaProcessos.size(); i++) {
-      if(filaProcessos[i]->get_state()=="finished") {
-        filaProcessos.erase(filaProcessos.begin()+i);
+    for (int i = 0; i < tlb.size(); i++) {
+      if(filaProcessos[tlb[i]]->get_state()=="finished") {
+        tlb.erase(tlb.begin()+i);
       };
     }
   }

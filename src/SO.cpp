@@ -31,14 +31,17 @@ vector<string> split(const string &str) {
   return result;
 }
 
-vector<PCB*> getFilaProcessos(){
+vector<PCB*> getFilaProcessos(vector<int>* tlb){
   vector<PCB*> filaProcessos;
   string folderPath = "dataset"; 
+  int cont = 0;
   try {
     for (const auto& entry : filesystem::directory_iterator(folderPath)) {
       if (entry.is_regular_file()) {
         PCB* temp = new PCB(entry.path().filename());
         filaProcessos.push_back(temp);
+        tlb->push_back(cont);
+        cont++;
       }
     }
   } catch (const filesystem::filesystem_error& e) {

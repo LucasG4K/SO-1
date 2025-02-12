@@ -17,7 +17,7 @@ using namespace std;
 
 void writeRamToFile(string& instruction, pair<int,pthread_mutex_t*>* ram);
 vector<string> split(const string& str);
-vector<PCB*> getFilaProcessos();
+vector<PCB*> getFilaProcessos(vector<int>* tlb);
 void Success(string print);
 void checkpoint(string print);
 void error(string print);
