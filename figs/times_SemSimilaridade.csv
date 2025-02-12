@@ -1,0 +1,4 @@
+Escalonador;MC 1, Cache 0;MC 1, Cache 1;MC 2, Cache 0;MC 2, Cache 1
+RoundRobin;941.26;1039.68;818.34;845.88
+First Come;995.93;956.84;855.27;866.8
+Short First;930.0;963.0;859.2727272727273;846.29

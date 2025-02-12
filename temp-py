@@ -35,7 +35,7 @@ def process_files_in_folder(folder_path):
     
     return results
 
-folder_path = "SemSimilaridade"
+folder_path = "Similares"
 data = process_files_in_folder(folder_path)
 
 print("\nAverage values per configuration:")
@@ -66,12 +66,26 @@ for i, config in enumerate(configurations):
     ax.bar(x + i * width - (width * 1.5), duration_matrix[:, i], width, label=f'MC {config[0]}, Cache {config[1]}')
 
 # Labels and formatting
-ax.set_xlabel('Scheduler')
-ax.set_ylabel('Duration (us)')
-ax.set_title('Execution Duration by Scheduler and Configuration')
+ax.set_xlabel('Escalonador')
+ax.set_ylabel('Time (us)')
+ax.set_title('Tempo de execução por escalonador e configuração')
 ax.set_xticks(x)
 ax.set_xticklabels(schedulers, rotation=45, ha='right')
 ax.legend()
 
 plt.tight_layout()
-plt.savefig("figs/times"+folder_path+".png")
+
+# Save figure
+image_filename = f"figs/times_{folder_path}.png"
+csv_filename = f"figs/times_{folder_path}.csv"
+plt.savefig(image_filename)
+
+# Save CSV with the same data as the graph
+with open(csv_filename, mode='w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.writer(csvfile, delimiter=';')
+    writer.writerow(["Escalonador"] + [f"MC {config[0]}, Cache {config[1]}" for config in configurations])
+    for scheduler, durations in zip(schedulers, duration_matrix):
+        writer.writerow([scheduler] + list(durations))
+
+print(f"Graph saved as {image_filename}")
+print(f"CSV data saved as {csv_filename}")
