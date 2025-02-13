@@ -1,18 +1,15 @@
-#include "CPU.hpp"
-#include <limits>
-#include <algorithm>
+#include "MMU.hpp"
 #include <unistd.h>
 
 PCB* initProcess = nullptr;
 bool changeInitProcess=true;
-vector<int> tlb;
-vector<PCB*> filaProcessos = getFilaProcessos(&tlb);
 CPU cpu;
+MMU mmu;
 
 void* callCore(void* arguments){
   // Como não se usa join, damos detach na thread para que quando ela acabar os recursos sejam
   pthread_detach(pthread_self()); // == 0?Success("Thread separada"):error("Erro ao separar thread"); 
-  while (!tlb.empty())
+  while (!mmu.getFila().empty())
   {
     if(initProcess!=nullptr) {
       changeInitProcess=true;
@@ -23,23 +20,54 @@ void* callCore(void* arguments){
   return nullptr;
 }
 
+void resumo(int escalonador, chrono::_V2::system_clock::time_point start){
+  // Abrir arquivo
+  string filename = "output/output" + to_string(escalonador) + to_string(MultiCore) + to_string(UseCache) + ".csv";
+  ifstream fileCheck(filename);
+  bool fileExists = fileCheck.good();
+  fileCheck.close();
+  ofstream outFile(filename, ios::out | ios::app);
+  if (!outFile) {
+      throw ios_base::failure("Failed to create the file");
+  }
+
+  // Se o arquivo não existia coloca o header
+  if (!fileExists) outFile << "Escalonador;QtdCores;UsaCache;QtdUla;QtdPipeline;Duração (us)\n";
+  // Insere dados em csv
+  switch (escalonador)
+  {
+    case 0:
+      outFile<<"RoundRobin;";
+      break;
+    case 1:
+      outFile<<"First Come;";
+      break;
+    case 2:
+      outFile<<"Short First;";
+      break;
+    default:
+      break;
+  }
+  outFile << MultiCore<<";";
+  outFile << UseCache<<";";
+  outFile << cpu.ULAs_counter()<<";";
+  outFile << cpu.Pipeline_counter()<<";";
+  auto end = chrono::high_resolution_clock::now();
+  auto duration = chrono::duration_cast<chrono::microseconds>(end - start).count();
+  outFile << duration<<";"<<endl;
+  outFile.close();
+}
+
+
 int main() {
-  pthread_t threads[filaProcessos.size()];
   int escalonador;
   int indexThread=0;
 
-  escalonador=0;
+  escalonador=2;
 
   auto start = chrono::high_resolution_clock::now();
 
-  // Cria thread dos cores
-  for (int i = 0; i < MultiCore; i++) {
-    auto rc = pthread_create(&threads[indexThread], NULL, callCore, NULL);
-    //rc==0?Success("Thread criada com sucesso"): error("Erro "+to_string(rc)+" ao criar a thread");
-    indexThread++;
-  }
-
-  for (auto &&i : filaProcessos) {
+  for (auto &&i : mmu.getProcessos()) {
     switch (escalonador) {
       case 0: //seta o quantum de cada um
         i->set_quantum(5);
@@ -59,71 +87,39 @@ int main() {
         break;
     }
   }
+
+  auto temp=mmu.getProcessos();
+  
   if(escalonador==2) {
-    sort(filaProcessos.begin(), filaProcessos.end(),
-          [](PCB* const & a, PCB* const & b) -> bool
-          { return a->get_et() < b->get_et(); } );
+    mmu.sortProcess();
+  }
+
+  pthread_t threads[mmu.getProcessos().size()];
+
+  // Cria thread dos cores
+  for (int i = 0; i < MultiCore; i++) {
+    auto rc = pthread_create(&threads[indexThread], NULL, callCore, NULL);
+    //rc==0?Success("Thread criada com sucesso"): error("Erro "+to_string(rc)+" ao criar a thread");
+    indexThread++;
   }
 
   // Monitora a lista de processos
-  while (!tlb.empty()) {
+  while (!mmu.getFila().empty()) {
     if (changeInitProcess) {
-      int initProcessIndex=tlb.front();
-      initProcess = filaProcessos[initProcessIndex]; 
+      int initProcessIndex=mmu.getFila().front();
+      initProcess = mmu.getProcesso(initProcessIndex); 
       usleep(100);
 
       // Tira da frente, e coloca no final,
-      tlb.erase(tlb.begin());
-      tlb.push_back(initProcessIndex);
+      mmu.changeProcess(initProcessIndex);
       changeInitProcess=false;
     }
     
     // Checa quantidade de processos finalizados
-    for (int i = 0; i < tlb.size(); i++) {
-      if(filaProcessos[tlb[i]]->get_state()=="finished") {
-        tlb.erase(tlb.begin()+i);
-      };
-    }
+    mmu.removeFinishedProcess();
   }
 
-  std::string filename = "output/output" + std::to_string(escalonador) + std::to_string(MultiCore) + std::to_string(UseCache) + ".csv";
+  resumo(escalonador,start);
 
-  // Check if the file exists
-  std::ifstream fileCheck(filename);
-  bool fileExists = fileCheck.good();
-  fileCheck.close();
-
-  // Open file in append mode
-  std::ofstream outFile(filename, std::ios::out | std::ios::app);
-  if (!outFile) {
-      throw std::ios_base::failure("Failed to create the file");
-  }
-
-  // If the file didn't exist, write the header first
-  if (!fileExists) {
-      outFile << "Escalonador;QtdCores;UsaCache;QtdUla;QtdPipeline;Duração (us)\n";
-  }
-  switch (escalonador)
-  {
-  case 0:
-    outFile<<"RoundRobin;";
-    break;
-  case 1:
-    outFile<<"First Come;";
-    break;
-  case 2:
-    outFile<<"Short First;";
-    break;
-  default:
-    break;
-  }
-  outFile << MultiCore<<";";
-  outFile << UseCache<<";";
-  outFile << cpu.ULAs_counter()<<";";
-  outFile << cpu.Pipeline_counter()<<";";
-  auto end = chrono::high_resolution_clock::now();
-  auto duration = chrono::duration_cast<chrono::microseconds>(end - start).count();
-  outFile << duration<<";"<<endl;
-  outFile.close();
   return 0;
 }
